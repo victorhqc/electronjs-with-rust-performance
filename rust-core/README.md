@@ -25,3 +25,11 @@ For Windows
 ```powershell
 .\scripts\init.bat
 ```
+
+## Specifications
+
+### Database model
+
+Here's an Entity Relation model
+
+![Database Entity Relation Diagram](./db.svg)
