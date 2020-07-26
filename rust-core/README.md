@@ -14,8 +14,14 @@ the details for the database & basic utilities that can be reused across project
 Duplicate the `.env.example` file and name it `.env`. It contains the environment variables needed
 to run the project.
 
-```bash
-diesel migration run
+For Linux an Mac OSX
 
-sqlite3 lol_matches.db
+```bash
+./scripts/init.sh
+```
+
+For Windows
+
+```powershell
+.\scripts\init.bat
 ```
