@@ -1,7 +1,15 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+#[macro_use]
+extern crate diesel;
+
+#[macro_use]
+extern crate serde_derive;
+
+#[macro_use]
+extern crate diesel_migrations;
+
+#[macro_use]
+extern crate strum_macros;
+
+pub mod helpers;
+pub mod models;
+pub mod schema;
