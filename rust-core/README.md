@@ -33,3 +33,11 @@ For Windows
 Here's an Entity Relation model
 
 ![Database Entity Relation Diagram](./db.svg)
+
+Original data is gotten from [kaggle](https://www.kaggle.com/paololol/league-of-legends-ranked-matches)
+but the `.csv` files are a bit different from original source:
+
+- Removed header from csv files to be able to import them with `sqlite3`.
+- Added extra column in `teambans` and `teamstats` to act as an id, because `matchid` can't act as
+  a primary key in those tables. `diesel` requires the tables to have a primary key, so I added a
+  simple auto-increment column.
