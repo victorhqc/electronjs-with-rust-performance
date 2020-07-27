@@ -13,9 +13,15 @@ data, intensive computations or just keep adding more and more features to an ap
 attempts to test possible performance gains using Rust in various flavors: Using native _Add-Ons_
 using [neon](https://neon-bindings.com/) and using [WebAssembly](https://webassembly.org/).
 
-This technically would turn a JavaScript into a Native/Hybrid application and the complexity will
-possibly be greater, but it allows to keep using the DOM & CSS to handle the UI and leave JS to
-worry only about user events.
+This technically would turn a JavaScript application into a Native/Hybrid application and the
+complexity will possibly be greater, but it allows to keep using web technologies to handle the UI
+and handle _most_ of the business logic with Rust.
+
+And although this can also be achieved with C++, Rust has better ergonomics and its technically
+easier for new starters to jump into, as well as being
+[safer](https://msrc-blog.microsoft.com/2019/07/22/why-rust-for-safe-systems-programming/). And
+let's not forget that Rust is the
+[most loved language for 5th year in a row](https://insights.stackoverflow.com/survey/2020#most-loved-dreaded-and-wanted).
 
 ## Repository structure
 
