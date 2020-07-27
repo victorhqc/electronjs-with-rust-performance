@@ -12,4 +12,5 @@ extern crate strum_macros;
 
 pub mod db;
 pub mod models;
+pub mod movies;
 pub mod schema;
