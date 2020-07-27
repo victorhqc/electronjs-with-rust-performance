@@ -11,6 +11,5 @@ extern crate diesel_migrations;
 extern crate strum_macros;
 
 pub mod db;
-pub mod helpers;
 pub mod models;
 pub mod schema;
