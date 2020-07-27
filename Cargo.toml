@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+  "rust-core",
+  "neon-bindings/native"
+]
