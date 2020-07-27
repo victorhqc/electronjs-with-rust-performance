@@ -23,6 +23,15 @@ easier for new starters to jump into, as well as being
 let's not forget that Rust is the
 [most loved language for 5th year in a row](https://insights.stackoverflow.com/survey/2020#most-loved-dreaded-and-wanted).
 
+## About the data
+
+The data is about 300MB of league of legends data (in a SQLite DB), which was gotten originally from
+[kaggle](https://www.kaggle.com/paololol/league-of-legends-ranked-matches) but the data used here
+is a bit modified to adapt it into SQLite, but the information itself should be the exact same.
+
+And _why league of legends?_ you may ask. Well, I like the game, and might as well find some
+interesting statistics now that I'm doing this (⌐■_■)
+
 ## Repository structure
 
 Note: **bold** items are the applications (which is the part that this projects measures). And the
