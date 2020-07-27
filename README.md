@@ -29,7 +29,7 @@ The data is about 300MB of league of legends data (in a SQLite DB), which was go
 [kaggle](https://www.kaggle.com/paololol/league-of-legends-ranked-matches) but the data used here
 is a bit modified to adapt it into SQLite, but the information itself should be the exact same.
 
-And _why league of legends?_ you may ask. Well, I like the game, and might as well find some
+And _why league of legends?_ you might ask. Well, I like the game, and might as well find some
 interesting statistics now that I'm doing this (⌐■_■)
 
 ## Repository structure
