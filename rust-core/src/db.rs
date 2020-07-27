@@ -9,7 +9,7 @@ embed_migrations!();
 pub fn db_pool(url: Option<String>) -> Result<DbPool> {
   let database_url = match url {
     Some(u) => format!("{}", u),
-    None => env::var("DATABASE_URL").unwrap_or_else(|_| "./lol_matches.db".to_string()),
+    None => env::var("DATABASE_URL").unwrap_or_else(|_| "./imdb.db".to_string()),
   };
   let manager = ConnectionManager::<SqliteConnection>::new(database_url);
 
