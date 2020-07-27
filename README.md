@@ -23,12 +23,12 @@ Note: **bold** items are the applications (which is the part that this projects 
 _italic_ items are only meant for supporting the main code, could be considered a kind of
 boilerplate or base for the _Electron.js_ applications.
 
-- _rust-core:_ Code that is used in _Add-Ons_ and WebAssembly implementation for rust.
 - **js-app:** TBD...
-- _neon-bindings:_ Native _Add-Ons_ (bindings) to be used in a _Node.js_ or _Electron.js_
-  application.
 - **neon-app:** _Electron.js_ application using the Native _Add-Ons_
 - **webassembly-app:** TBD...
+- _rust-core:_ Code that is used in _Add-Ons_ and WebAssembly implementation for rust.
+- _neon-bindings:_ Native _Add-Ons_ (bindings) to be used in a _Node.js_ or _Electron.js_
+  application.
 
 ## How to run tests locally
 
