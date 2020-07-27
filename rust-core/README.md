@@ -30,7 +30,7 @@ For Windows
 
 ### Database model
 
-Here's an Entity Relation model
+Here's the Entity Relation model for the database.
 
 ![Database Entity Relation Diagram](./db.svg)
 
