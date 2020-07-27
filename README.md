@@ -25,12 +25,13 @@ let's not forget that Rust is the
 
 ## About the data
 
-The data is about 300MB of league of legends data (in a SQLite DB), which was gotten originally from
-[kaggle](https://www.kaggle.com/paololol/league-of-legends-ranked-matches) but the data used here
+The data is about 192MB of imdb data (in a SQLite DB), which was gotten originally from
+[kaggle](https://www.kaggle.com/stefanoleone992/imdb-extensive-dataset) but the data used here
 is a bit modified to adapt it into SQLite, but the information itself should be the exact same.
 
-And _why league of legends?_ you might ask. Well, I like the game, and might as well find some
-interesting statistics now that I'm doing this (⌐■_■)
+And _why imdb?_ you might ask. Well I first tried with a
+[league of legends data set](https://www.kaggle.com/paololol/league-of-legends-ranked-matches), but
+the data was incomplete/broken so I went with the second option (╯°□°）╯︵ ┻━┻)
 
 ## Repository structure
 
