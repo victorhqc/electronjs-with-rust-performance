@@ -1,38 +1,27 @@
 @echo off
 setlocal
-  SET DATABASE_URL=.\lol_matches.db
-  SET champs=%~dp0\..\\data\\champs_no-header.csv
-  SET matches=%~dp0\..\\data\\matches_no-header.csv
-  SET participants=%~dp0\..\\data\\participants_no-header.csv
-  SET teamstats=%~dp0\..\\data\\teamstats_no-header.csv
-  SET teambans=%~dp0\..\\data\\teambans_no-header.csv
-  SET stats1=%~dp0\..\\data\\stats1_no-header.csv
-  SET stats2=%~dp0\..\\data\\stats2_no-header.csv
+  SET DATABASE_URL=.\imdb.db
+  SET movies=%~dp0\..\\data\\imdb_movies.csv
+  SET names=%~dp0\..\\data\\imdb_names.csv
+  SET ratings=%~dp0\..\\data\\imdb_ratings.csv
+  SET titleprincipals=%~dp0\..\\data\\imdb_title_principals.csv
 
-  del .\lol_matches.db
+  del .\imdb.db
 
   echo Migrating data
   diesel migration run
 
-  echo Importing champions...
-  sqlite3 lol_matches.db ".mode csv" ".import %champs% champs"
+  echo Importing movies...
+  sqlite3 imdb.db ".mode csv" ".import %movies% imdb_movies"
 
-  echo Importing matches...
-  sqlite3 lol_matches.db ".mode csv" ".import %matches% matches"
+  echo Importing names...
+  sqlite3 imdb.db ".mode csv" ".import %names% imdb_names"
 
-  echo Importing participants...
-  sqlite3 lol_matches.db ".mode csv" ".import %participants% participants"
+  echo Importing ratings...
+  sqlite3 imdb.db ".mode csv" ".import %ratings% imdb_ratings"
 
-  echo Importing team stats...
-  sqlite3 lol_matches.db ".mode csv" ".import %teamstats% teamstats"
-
-  echo Importing team bans...
-  sqlite3 lol_matches.db ".mode csv" ".import %teambans% teambans"
-
-  echo Importing stats...
-  sqlite3 lol_matches.db ".mode csv" ".import %stats1% stats"
-  echo Importing stats (second part)...
-  sqlite3 lol_matches.db ".mode csv" ".import %stats2% stats"
+  echo Importing title principals...
+  sqlite3 imdb.db ".mode csv" ".import %titleprincipals% imdb_title_principals"
 
 echo Done!
 
