@@ -1,3 +1,8 @@
+mod config;
+
+#[macro_use]
+extern crate serde_derive;
+
 use neon::prelude::*;
 
 fn hello(mut cx: FunctionContext) -> JsResult<JsString> {
