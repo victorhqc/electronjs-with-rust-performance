@@ -1,3 +1,3 @@
-const addon = require('../native');
-
-console.log(addon.hello());
+export * from './main';
+export * from './init';
+export * from './types';

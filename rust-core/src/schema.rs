@@ -121,9 +121,4 @@ joinable!(imdb_ratings -> imdb_movies (imdb_title_id));
 joinable!(imdb_title_principals -> imdb_movies (imdb_title_id));
 joinable!(imdb_title_principals -> imdb_names (imdb_name_id));
 
-allow_tables_to_appear_in_same_query!(
-    imdb_movies,
-    imdb_names,
-    imdb_ratings,
-    imdb_title_principals,
-);
+allow_tables_to_appear_in_same_query!(imdb_movies, imdb_names, imdb_ratings, imdb_title_principals,);

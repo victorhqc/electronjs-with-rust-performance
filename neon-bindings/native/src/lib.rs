@@ -1,12 +1,14 @@
+mod bindings;
 mod config;
+mod helpers;
 
 #[macro_use]
 extern crate serde_derive;
 
 use neon::prelude::*;
 
-fn hello(mut cx: FunctionContext) -> JsResult<JsString> {
-    Ok(cx.string("hello node"))
-}
+register_module!(mut cx, {
+    cx.export_function("getMovies", bindings::movies::get_movies)?;
 
-register_module!(mut cx, { cx.export_function("hello", hello) });
+    Ok(())
+});
