@@ -7,28 +7,36 @@ use crate::models::{ImdbMovie, ImdbRatings};
 use diesel::prelude::*;
 use snafu::{ResultExt, Snafu};
 
-pub fn get_all(pool: &DbPool, offset: i64, limit: i64) -> Result<Vec<ImdbMovie>> {
+pub fn get_all(pool: &DbPool, offset: i64, limit: i64, bollywod: bool) -> Result<Vec<ImdbMovie>> {
   let conn = pool.get().context(GetConnection)?;
 
   let movies: Vec<ImdbMovie> = {
     use crate::schema::imdb_movies::dsl::*;
 
-    imdb_movies
-      .limit(limit)
-      .offset(offset)
-      .load(&conn)
-      .context(Query)?
+    let mut query = imdb_movies.limit(limit).offset(offset).into_boxed();
+
+    if !bollywod {
+      query = query.filter(country.ne(String::from("India")));
+    }
+
+    query.load(&conn).context(Query)?
   };
 
   Ok(movies)
 }
 
-pub fn total(pool: &DbPool) -> Result<i64> {
+pub fn total(pool: &DbPool, bollywood: bool) -> Result<i64> {
   use crate::schema::imdb_movies::dsl::*;
 
   let conn = pool.get().context(GetConnection)?;
 
-  let total = imdb_movies.count().get_result(&conn).context(Query)?;
+  let mut query = imdb_movies.count().into_boxed();
+
+  if !bollywood {
+    query = query.filter(country.ne(String::from("India")));
+  }
+
+  let total = query.get_result(&conn).context(Query)?;
   Ok(total)
 }
 

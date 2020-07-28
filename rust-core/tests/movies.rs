@@ -9,7 +9,7 @@ use rust_core::movies::{
 fn get_all_movies() {
   let pool = db_pool();
 
-  let movies = get_all(&pool, 0, 500).unwrap();
+  let movies = get_all(&pool, 0, 500, true).unwrap();
 
   assert_eq!(movies.len(), 500);
 }
@@ -18,7 +18,7 @@ fn get_all_movies() {
 fn get_total() {
   let pool = db_pool();
 
-  let t = total(&pool).unwrap();
+  let t = total(&pool, true).unwrap();
 
   assert_eq!(t, 81_273);
 }
