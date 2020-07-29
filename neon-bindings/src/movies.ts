@@ -1,11 +1,17 @@
 import { callNative } from './utils';
 
-export function getMovies(): Promise<ImdbMovie[]> {
-  return callNative('getMovies');
+export type GetMoviesArgs = BollywoodArgs & PaginationArgs;
+export function getMovies(args: GetMoviesArgs): Promise<ImdbMovie[]> {
+  return callNative('getMovies', args);
 }
 
-export function getTotalMovies(): Promise<Number> {
-  return callNative('getTotalMovies');
+export function getTotalMovies(args: BollywoodArgs): Promise<Number> {
+  return callNative('getTotalMovies', args);
+}
+
+export type GetRatedMoviesByYearArgs = BollywoodArgs & PaginationArgs & { year: Number };
+export function getRatedMoviesByYear(args: GetRatedMoviesByYearArgs): Promise<ImdbMovie[]> {
+  return callNative('getRatedMoviesByYear', args);
 }
 
 export type ImdbMovie = {
@@ -31,4 +37,13 @@ export type ImdbMovie = {
   metascore: Number;
   reviews_from_users: Number;
   reviews_from_critics: Number;
+};
+
+export type BollywoodArgs = {
+  bolywood?: boolean | null;
+};
+
+export type PaginationArgs = {
+  page: Number;
+  pageSize?: Number | null;
 };

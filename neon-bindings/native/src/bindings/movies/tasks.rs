@@ -1,10 +1,9 @@
-use crate::config::Config;
 use neon::prelude::*;
 use neon_serde::to_value;
 use rust_core::{
     db_pool,
     models::{ImdbMovie, ImdbRatings},
-    movies::{get_all, total, MoviesError},
+    movies::{get_all, rated_by_year, total, MoviesError},
     DbError,
 };
 use snafu::{ResultExt, Snafu};
@@ -13,7 +12,7 @@ pub struct GetMoviesTask {
     pub offset: i64,
     pub limit: i64,
     pub bollywood: bool,
-    pub config: Config,
+    pub db_path: Option<String>,
 }
 
 impl Task for GetMoviesTask {
@@ -23,7 +22,7 @@ impl Task for GetMoviesTask {
 
     fn perform(&self) -> Result<Self::Output> {
         let movies: Vec<ImdbMovie> = {
-            let pool = db_pool(self.config.db_path.clone()).context(DBIssue)?;
+            let pool = db_pool(self.db_path.clone()).context(DBIssue)?;
 
             get_all(&pool, self.offset, self.limit, self.bollywood).context(MoviesIssue)?
         };
@@ -45,19 +44,57 @@ impl Task for GetMoviesTask {
 }
 
 pub struct GetTotalMoviesTask {
-    pub config: Config,
+    pub bollywood: bool,
+    pub db_path: Option<String>,
 }
 
-impl Task for GetMoviesTask {
+impl Task for GetTotalMoviesTask {
     type Output = i64;
     type Error = MoviesTaskError;
     type JsEvent = JsValue;
 
     fn perform(&self) -> Result<Self::Output> {
-        let movies: Vec<ImdbMovie> = {
-            let pool = db_pool(self.config.db_path.clone()).context(DBIssue)?;
+        let total: i64 = {
+            let pool = db_pool(self.db_path.clone()).context(DBIssue)?;
 
             total(&pool, self.bollywood).context(MoviesIssue)?
+        };
+
+        Ok(total)
+    }
+
+    fn complete(
+        self,
+        mut cx: TaskContext,
+        result: Result<Self::Output>,
+    ) -> JsResult<Self::JsEvent> {
+        let data = to_value(&mut cx, &result.unwrap())
+            .context(Serialization)
+            .unwrap();
+
+        Ok(data)
+    }
+}
+
+pub struct GetRatedMoviesByYearTask {
+    pub year: i32,
+    pub offset: i64,
+    pub limit: i64,
+    pub bollywood: bool,
+    pub db_path: Option<String>,
+}
+
+impl Task for GetRatedMoviesByYearTask {
+    type Output = Vec<ImdbMovie>;
+    type Error = MoviesTaskError;
+    type JsEvent = JsValue;
+
+    fn perform(&self) -> Result<Self::Output> {
+        let movies: Vec<ImdbMovie> = {
+            let pool = db_pool(self.db_path.clone()).context(DBIssue)?;
+
+            rated_by_year(&pool, self.year, self.offset, self.limit, self.bollywood)
+                .context(MoviesIssue)?
         };
 
         Ok(movies)

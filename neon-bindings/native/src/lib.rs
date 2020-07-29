@@ -10,6 +10,10 @@ use neon::prelude::*;
 register_module!(mut cx, {
     cx.export_function("getMovies", bindings::movies::get_movies)?;
     cx.export_function("getTotalMovies", bindings::movies::get_total_movies)?;
+    cx.export_function(
+        "getRatedMoviesByYear",
+        bindings::movies::get_rated_movies_by_year,
+    )?;
 
     Ok(())
 });
