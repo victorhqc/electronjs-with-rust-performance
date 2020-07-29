@@ -12,5 +12,7 @@ pub mod dsl;
 pub mod models;
 pub mod movies;
 pub mod schema;
+mod types;
 
 pub use db::*;
+pub use types::*;
