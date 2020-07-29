@@ -31,8 +31,22 @@ pub fn get_movies(mut cx: FunctionContext) -> JsResult<JsUndefined> {
         offset: pag.offset,
         limit: pag.limit,
         bollywood: bollywood,
-        db_path: config.db_path,
+        config,
     };
+    task.schedule(cb);
+
+    Ok(result)
+}
+
+// This could probably be a sync operation, but I'd rather have it all async.
+pub fn get_total_movies(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+    let config_arg: Handle<JsValue> = cx.argument(0)?;
+    let cb = cx.argument::<JsFunction>(1).expect("Callback is missing");
+
+    let result: Handle<JsUndefined> = cx.undefined();
+    let config: Config = from_value(&mut cx, config_arg)?;
+
+    let task = tasks::GetTotalMoviesTask { config };
     task.schedule(cb);
 
     Ok(result)

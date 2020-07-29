@@ -4,6 +4,10 @@ export function getMovies(): Promise<ImdbMovie[]> {
   return callNative('getMovies');
 }
 
+export function getTotalMovies(): Promise<Number> {
+  return callNative('getTotalMovies');
+}
+
 export type ImdbMovie = {
   imdbTitleId: string;
   title: string;
