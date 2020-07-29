@@ -1,7 +1,8 @@
 use crate::{config::Config, helpers::Pagination};
 use neon::prelude::*;
 use neon_serde::from_value;
-use rust_core::movies::RatedByYearArgs;
+use rust_core::movies::{RatedByGenderArgs, RatedByYearArgs};
+use rust_core::Gender;
 
 mod tasks;
 
@@ -87,6 +88,43 @@ pub fn get_rated_movies_by_year(mut cx: FunctionContext) -> JsResult<JsUndefined
     let task = tasks::GetRatedMoviesByYearTask {
         args: RatedByYearArgs {
             year: args.year,
+            limit: pag.limit,
+            offset: pag.offset,
+            bollywood,
+        },
+        db_path: config.db_path,
+    };
+    task.schedule(cb);
+
+    Ok(result)
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct GetRatedByGenderArgs {
+    year: i32,
+    page: i64,
+    gender: Gender,
+    page_size: Option<i64>,
+    bollywood: Option<bool>,
+}
+
+pub fn get_rated_movies_by_gender_in_year(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+    let arg: Handle<JsValue> = cx.argument(0)?;
+    let config_arg: Handle<JsValue> = cx.argument(1)?;
+    let cb = cx.argument::<JsFunction>(2).expect("Callback is missing");
+
+    let result: Handle<JsUndefined> = cx.undefined();
+    let args: GetRatedByGenderArgs = from_value(&mut cx, arg)?;
+    let config: Config = from_value(&mut cx, config_arg)?;
+
+    let pag = Pagination::from_js(args.page, args.page_size);
+    let bollywood = args.bollywood.unwrap_or(false);
+
+    let task = tasks::GetByGenderInYearTask {
+        args: RatedByGenderArgs {
+            year: args.year,
+            gender: args.gender,
             limit: pag.limit,
             offset: pag.offset,
             bollywood,

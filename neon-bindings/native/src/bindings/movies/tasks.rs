@@ -3,7 +3,10 @@ use neon_serde::to_value;
 use rust_core::{
     db_pool,
     models::{ImdbMovie, ImdbRatings},
-    movies::{get_all, rated_by_year, total, MoviesError, RatedByYearArgs},
+    movies::{
+        get_all, rated_by_gender_in_year, rated_by_year, total, MoviesError, RatedByGenderArgs,
+        RatedByYearArgs,
+    },
     DbError,
 };
 use snafu::{ResultExt, Snafu};
@@ -91,6 +94,39 @@ impl Task for GetRatedMoviesByYearTask {
             let pool = db_pool(self.db_path.clone()).context(DBIssue)?;
 
             rated_by_year(&pool, self.args).context(MoviesIssue)?
+        };
+
+        Ok(movies)
+    }
+
+    fn complete(
+        self,
+        mut cx: TaskContext,
+        result: Result<Self::Output>,
+    ) -> JsResult<Self::JsEvent> {
+        let data = to_value(&mut cx, &result.unwrap())
+            .context(Serialization)
+            .unwrap();
+
+        Ok(data)
+    }
+}
+
+pub struct GetByGenderInYearTask {
+    pub args: RatedByGenderArgs,
+    pub db_path: Option<String>,
+}
+
+impl Task for GetByGenderInYearTask {
+    type Output = Vec<(ImdbMovie, ImdbRatings)>;
+    type Error = MoviesTaskError;
+    type JsEvent = JsValue;
+
+    fn perform(&self) -> Result<Self::Output> {
+        let movies: Vec<(ImdbMovie, ImdbRatings)> = {
+            let pool = db_pool(self.db_path.clone()).context(DBIssue)?;
+
+            rated_by_gender_in_year(&pool, self.args).context(MoviesIssue)?
         };
 
         Ok(movies)

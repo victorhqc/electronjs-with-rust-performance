@@ -15,5 +15,10 @@ register_module!(mut cx, {
         bindings::movies::get_rated_movies_by_year,
     )?;
 
+    cx.export_function(
+        "getRatedMoviesByGenderInYear",
+        bindings::movies::get_rated_movies_by_gender_in_year,
+    )?;
+
     Ok(())
 });
