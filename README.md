@@ -23,6 +23,23 @@ easier for new starters to jump into, as well as being
 let's not forget that Rust is the
 [most loved language for 5th year in a row](https://insights.stackoverflow.com/survey/2020#most-loved-dreaded-and-wanted).
 
+## What is measured?
+
+The "easiest" way to test for performance is to build a regular application for each use-case and
+check differences in them. This experiment consists in three different applications: One built with
+only JS, one with Native _Add-Ons_ using Rust and the last using WebAssembly, also with Rust.
+
+Each application just calls a very big _SQLite_ Database and makes different queries and renders the
+data. The idea is to make an application as it was a real thing and not a synthetic test.
+
+The parameters to measure are:
+
+    - Execution time
+    - Memory consumed
+    - Code complexity (a naïve check for number of lines)
+    - Bundle size
+    - Application size
+
 ## About the data
 
 The data is about 192MB of imdb data (in a SQLite DB), which was gotten originally from
