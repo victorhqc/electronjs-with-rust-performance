@@ -60,6 +60,7 @@ pub fn rated_by_year(
             .offset(offset)
             .into_boxed();
 
+        // @TODO: Abstract this into a DSL function
         if !bollywood {
             query = query.filter(country.ne(String::from("India")));
         }
@@ -84,6 +85,8 @@ pub fn rated_by_males_in_year(
 
         let join = imdb_movies::table.inner_join(imdb_ratings::table);
 
+        // @TODO: Move away from join & loop instead.
+        // There's an interesting reason here: https://github.com/petehunt/rowrm#why-cant-i-do-joins
         let mut query = join
             .select((MOVIES_ALL_COLUMNS, RATINGS_ALL_COLUMNS))
             .filter(imdb_movies::year.eq(desired_year))
