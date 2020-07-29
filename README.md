@@ -34,11 +34,11 @@ data. The idea is to make an application as it was a real thing and not a synthe
 
 The parameters to measure are:
 
-    - Execution time
-    - Memory consumed
-    - Code complexity (a naïve check for number of lines)
-    - Bundle size
-    - Application size
+-   Execution time
+-   Memory consumed
+-   Code complexity (a naïve check for number of lines)
+-   Bundle size
+-   Application size
 
 ## About the data
 
