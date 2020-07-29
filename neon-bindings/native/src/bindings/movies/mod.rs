@@ -1,6 +1,7 @@
 use crate::{config::Config, helpers::Pagination};
 use neon::prelude::*;
 use neon_serde::from_value;
+use rust_core::movies::RatedByYearArgs;
 
 mod tasks;
 
@@ -84,10 +85,12 @@ pub fn get_rated_movies_by_year(mut cx: FunctionContext) -> JsResult<JsUndefined
     let bollywood = args.bollywood.unwrap_or(false);
 
     let task = tasks::GetRatedMoviesByYearTask {
-        year: args.year,
-        offset: pag.offset,
-        limit: pag.limit,
-        bollywood,
+        args: RatedByYearArgs {
+            year: args.year,
+            limit: pag.limit,
+            offset: pag.offset,
+            bollywood,
+        },
         db_path: config.db_path,
     };
     task.schedule(cb);

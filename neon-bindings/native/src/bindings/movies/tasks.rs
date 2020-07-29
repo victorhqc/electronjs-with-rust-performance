@@ -3,7 +3,7 @@ use neon_serde::to_value;
 use rust_core::{
     db_pool,
     models::{ImdbMovie, ImdbRatings},
-    movies::{get_all, rated_by_year, total, MoviesError},
+    movies::{get_all, rated_by_year, total, MoviesError, RatedByYearArgs},
     DbError,
 };
 use snafu::{ResultExt, Snafu};
@@ -77,10 +77,7 @@ impl Task for GetTotalMoviesTask {
 }
 
 pub struct GetRatedMoviesByYearTask {
-    pub year: i32,
-    pub offset: i64,
-    pub limit: i64,
-    pub bollywood: bool,
+    pub args: RatedByYearArgs,
     pub db_path: Option<String>,
 }
 
@@ -93,8 +90,7 @@ impl Task for GetRatedMoviesByYearTask {
         let movies: Vec<ImdbMovie> = {
             let pool = db_pool(self.db_path.clone()).context(DBIssue)?;
 
-            rated_by_year(&pool, self.year, self.offset, self.limit, self.bollywood)
-                .context(MoviesIssue)?
+            rated_by_year(&pool, self.args).context(MoviesIssue)?
         };
 
         Ok(movies)

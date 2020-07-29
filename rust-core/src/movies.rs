@@ -40,6 +40,7 @@ pub fn total(pool: &DbPool, bollywood: bool) -> Result<i64> {
     Ok(total)
 }
 
+#[derive(Clone, Copy)]
 pub struct RatedByYearArgs {
     pub year: i32,
     pub offset: i64,
@@ -72,6 +73,7 @@ pub fn rated_by_year(pool: &DbPool, args: RatedByYearArgs) -> Result<Vec<ImdbMov
     Ok(movies)
 }
 
+#[derive(Clone, Copy)]
 pub struct RatedByGenderArgs {
     pub gender: Gender,
     pub year: i32,
