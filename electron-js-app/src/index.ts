@@ -1,5 +1,8 @@
 import { app, BrowserWindow } from 'electron';
+
 import createStore from './store/createStore/main';
+import { init as initDB } from './db';
+
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -29,9 +32,10 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  createStore();
-
-  createWindow();
+  initDB().then(() => {
+    createWindow();
+    createStore();
+  });
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

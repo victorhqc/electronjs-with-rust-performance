@@ -10,6 +10,8 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "paths": {
       "*": ["node_modules/*", "src/@types/*"]
     }
