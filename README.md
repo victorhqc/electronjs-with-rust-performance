@@ -50,6 +50,8 @@ And _why imdb?_ you might ask. Well I first tried with a
 [league of legends data set](https://www.kaggle.com/paololol/league-of-legends-ranked-matches), but
 the data was incomplete/broken so I went with the second option (╯°□°）╯︵ ┻━┻)
 
+![Database schema](./db.svg)
+
 ## Repository structure
 
 Note: **bold** items are the applications (which is the part that this projects measures). And the
