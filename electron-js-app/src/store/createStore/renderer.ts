@@ -1,10 +1,8 @@
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { forwardToMain, replayActionRenderer, getInitialStateRenderer } from 'electron-redux';
-import { composeWithDevTools } from 'redux-devtools-extension/logOnlyInProduction';
 import rootReducer from '../rootReducer';
-
-const composeEnhancers = composeWithDevTools({});
+import { ApplicationAction, ApplicationState } from '../';
 
 const sagaMiddleware = createSagaMiddleware({});
 
@@ -14,15 +12,15 @@ const buildStore = () => {
   const store = createStore(
     rootReducer(),
     initialState,
-    composeEnhancers(
-      applyMiddleware(
-        forwardToMain, // this goes fitst!
-        sagaMiddleware,
-      ),
+    applyMiddleware(
+      forwardToMain, // this goes fitst!
+      sagaMiddleware,
     ),
   );
 
   replayActionRenderer(store);
+
+  global.__redux_store__ = store;
 
   return store;
 };

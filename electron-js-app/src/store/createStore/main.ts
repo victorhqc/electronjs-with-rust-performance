@@ -1,19 +1,23 @@
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { forwardToRenderer, replayActionMain, triggerAlias } from 'electron-redux';
+import { composeWithDevTools } from 'redux-devtools-extension/logOnlyInProduction';
 import rootSaga from '../rootSaga';
 import rootReducer from '../rootReducer';
 
+const composeEnhancers = composeWithDevTools({});
 const sagaMiddleware = createSagaMiddleware({});
 
 const buildStore = () => {
   const store = createStore(
     rootReducer(),
     {},
-    applyMiddleware(
-      triggerAlias,
-      sagaMiddleware,
-      forwardToRenderer, // this goes last!
+    composeEnhancers(
+      applyMiddleware(
+        triggerAlias,
+        sagaMiddleware,
+        forwardToRenderer, // this goes last!
+      ),
     ),
   );
 
@@ -22,5 +26,7 @@ const buildStore = () => {
 
   return store;
 };
+
+export type Store = ReturnType<typeof buildStore>;
 
 export default buildStore;

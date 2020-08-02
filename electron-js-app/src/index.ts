@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 
 import createStore from './store/createStore/main';
-import { init as initDB } from './db';
+import { init as initDB } from './db/connection';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
@@ -9,6 +9,11 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 if (require('electron-squirrel-startup')) {
   // eslint-disable-line global-require
   app.quit();
+}
+
+// Extension is broken for Electron 9 😢
+if (process.env.NODE_ENV !== 'production') {
+  require('./utils/installElectronExtensions');
 }
 
 const createWindow = () => {
