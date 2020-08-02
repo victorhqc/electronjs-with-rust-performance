@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 import { ImdbMovie } from './ImdbMovie';
 
 @Entity({ name: 'imdb_ratings' })
@@ -6,7 +6,6 @@ export class ImdbRatings {
   @PrimaryColumn()
   imdb_rating_id: number;
 
-  @ManyToOne((type) => ImdbMovie, (movie) => movie.ratings)
   @Column()
   imdb_title_id: string;
 

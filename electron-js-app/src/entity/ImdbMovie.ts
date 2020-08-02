@@ -1,6 +1,4 @@
-import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
-import { ImdbRatings } from './ImdbRatings';
-import { ImdbTitlePrincipal } from './ImdbTitlePrincipal';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'imdb_movies' })
 export class ImdbMovie {
@@ -69,10 +67,4 @@ export class ImdbMovie {
 
   @Column()
   reviews_from_critics: number;
-
-  @OneToMany((type) => ImdbRatings, (rating) => rating.imdb_title_id)
-  ratings: ImdbRatings[];
-
-  @OneToMany((type) => ImdbTitlePrincipal, (principal) => principal.imdb_title_id)
-  principals: ImdbTitlePrincipal[];
 }

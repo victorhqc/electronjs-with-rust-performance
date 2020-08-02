@@ -22,6 +22,9 @@ indent_size = 2
 [*.json]
 indent_size = 2
 
+[*.css]
+indent_size = 2
+
 [*.md]
 max_line_length = 0
 trim_trailing_whitespace = false

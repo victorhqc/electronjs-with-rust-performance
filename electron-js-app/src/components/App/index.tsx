@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getMoviesTotal } from '../../store/movies';
+import SearchByNames from '../SearchByNames';
 
 import './style.css';
 
@@ -11,8 +12,7 @@ const App: FC<Props> = ({ getTotal }) => {
 
   return (
     <div className="m-2">
-      <h1>💖 Hello World!</h1>
-      <p>Welcome to your Electron application.</p>
+      <SearchByNames />
     </div>
   );
 };
