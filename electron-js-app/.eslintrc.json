@@ -4,12 +4,33 @@
     "es6": true,
     "node": true
   },
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/eslint-recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:import/errors",
-      "plugin:import/warnings"
-    ],
-    "parser": "@typescript-eslint/parser"
+  "extends": [
+    "plugin:prettier",
+    "plugin:prettier/recommended",
+    "plugin:react/recommended",
+    "plugin:prettier/@typescript-eslint",
+    "plugin:react-hooks/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "project": "./tsconfig.json"
+  },
+  "settings": {
+    "react": {
+      "version": "16.13.1"
+    }
+  },
+  "rules": {
+    "prettier/prettier": 1,
+    "@typescript-eslint/no-use-before-define": ["error", { "functions": false, "typedefs": false }],
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "react/prop-types": 0
+  },
+  "parser": "@typescript-eslint/parser"
 }
