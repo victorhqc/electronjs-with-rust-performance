@@ -1,7 +1,10 @@
 import { app, BrowserWindow } from 'electron';
+import { config } from 'dotenv';
 
 import createStore from './store/createStore/main';
 import { init as initDB } from './db/connection';
+
+config({});
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 

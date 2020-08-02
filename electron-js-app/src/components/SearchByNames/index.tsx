@@ -28,7 +28,7 @@ const SearchByNames: FC<Props> = ({ search, items, status }) => {
 
   return (
     <div className="search-by-names" data-testid="search-by-names">
-      <h1 className="search-by-names__title">Search Hollywood stars ⭐</h1>
+      <h1 className="search-by-names__title">Search Hollywood Stars ⭐</h1>
       <form className="search-by-names__form" onSubmit={handleSubmit}>
         <input
           className="search-by-names__input"
@@ -41,7 +41,9 @@ const SearchByNames: FC<Props> = ({ search, items, status }) => {
       </form>
       <div className="search-by-names__items-wrapper">
         {status === 'loading' && <h2>Loading...</h2>}
-        {items.length === 0 && <p className="search-by-names__no-results">No results found.</p>}
+        {items.length === 0 && status !== 'loading' && (
+          <p className="search-by-names__no-results">No results found.</p>
+        )}
         {status === 'done' && (
           <ul className="search-by-names__items">
             {items.map(([person, movies]) => (
