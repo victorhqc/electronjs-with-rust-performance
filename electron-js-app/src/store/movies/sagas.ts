@@ -5,44 +5,14 @@ import { ActionMatchingPattern as ActionType } from '@redux-saga/types';
 import { getType } from 'typesafe-actions';
 import { errorMessage } from '../../utils/error';
 import { getMoviesTotal, searchMoviesByName } from '../../db/movies';
-import { selectTotalStatus, selectByNameStatus } from './selectors';
-import { getMoviesTotal as total, searchMoviesByName as search } from './actions';
+import { selectByNameStatus } from './selectors';
+import { searchMoviesByName as search } from './actions';
 
 function* moviesRootSaga() {
-  yield spawn(fetchMoviesTotalFlow);
   yield spawn(searchMoviesByNameFlow);
 }
 
 export default moviesRootSaga;
-
-function* fetchMoviesTotalFlow() {
-  while (true) {
-    const status = yield* select(selectTotalStatus);
-    if (status === 'loading') {
-      yield put(total.cancel());
-    }
-
-    yield* take(total.request);
-
-    yield fork(handleFetchTotal);
-
-    yield take([getType(total.failure), getType(total.request), getType(total.success)]);
-  }
-}
-
-function* handleFetchTotal() {
-  try {
-    const result = yield* call(getMoviesTotal);
-
-    yield put(total.success({ total: result }));
-  } catch (e) {
-    yield put(
-      total.failure({
-        message: errorMessage(e),
-      }),
-    );
-  }
-}
 
 function* searchMoviesByNameFlow() {
   while (true) {

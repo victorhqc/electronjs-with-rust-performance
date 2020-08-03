@@ -68,34 +68,6 @@ const totalsState: MoviesTotalState = {
   status: 'idle',
 };
 
-export const total: Reducer<MoviesTotalState, MovieAction> = (state = totalsState, action) => {
-  switch (action.type) {
-    case getType(actions.getMoviesTotal.request):
-      return {
-        status: 'loading',
-        data: 0,
-      };
-    case getType(actions.getMoviesTotal.success):
-      return {
-        status: 'done',
-        data: action.payload.total,
-      };
-    case getType(actions.getMoviesTotal.failure):
-      return {
-        ...state,
-        status: 'error',
-        error: action.payload,
-      };
-    case getType(actions.getMoviesTotal.cancel):
-      return {
-        ...state,
-        status: 'idle',
-      };
-    default:
-      return state;
-  }
-};
-
-export const movies = combineReducers({ list, total, byName });
+export const movies = combineReducers({ list, byName });
 
 export default { movies };
