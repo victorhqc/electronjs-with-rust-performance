@@ -1,12 +1,10 @@
 import { Sequelize } from 'sequelize';
-import { config } from 'dotenv';
-config({});
 
-console.log('DB: ', process.env.DATABASE_PATH);
-
+const config = require('../../config.json');
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: process.env.DATABASE_PATH,
+  storage: config.DATABASE_PATH,
+  logging: false,
 });
 
 export default sequelize;

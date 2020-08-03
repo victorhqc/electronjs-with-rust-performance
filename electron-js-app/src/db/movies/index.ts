@@ -19,26 +19,29 @@ export async function searchMoviesByName(name: string): Promise<NameWithMoviesTu
 
   const result: NameWithMoviesTuple[] = [];
 
-  const actors = await ImdbName.findAll({
-    where: {
-      [Op.or]: {
-        name: {
-          [Op.like]: `%${name}%`,
-        },
-        birth_name: {
-          [Op.like]: `%${name}%`,
+  const actors = (
+    await ImdbName.findAll({
+      where: {
+        [Op.or]: {
+          name: {
+            [Op.like]: `%${name}%`,
+          },
+          birth_name: {
+            [Op.like]: `%${name}%`,
+          },
         },
       },
-    },
-  });
+    })
+  ).map<ImdbName>((a) => a.get());
 
   for (const actor of actors) {
-    console.log('ACTOR', actor);
-    const principals = await ImdbTitlePrincipal.findAll({
-      where: {
-        imdb_name_id: actor.imdb_name_id,
-      },
-    });
+    const principals = (
+      await ImdbTitlePrincipal.findAll({
+        where: {
+          imdb_name_id: actor.imdb_name_id,
+        },
+      })
+    ).map<ImdbTitlePrincipal>((p) => p.get());
 
     const movies: ImdbMovie[] = [];
     for (const principal of principals) {
@@ -48,7 +51,7 @@ export async function searchMoviesByName(name: string): Promise<NameWithMoviesTu
         },
       });
 
-      movies.push(movie);
+      movies.push(movie.get());
     }
 
     result.push([actor, movies.sort(byMetascore).reverse()]);
