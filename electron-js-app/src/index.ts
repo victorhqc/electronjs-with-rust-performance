@@ -2,7 +2,6 @@ import { app, BrowserWindow } from 'electron';
 import { config } from 'dotenv';
 
 import createStore from './store/createStore/main';
-import { init as initDB } from './db/connection';
 
 config({});
 
@@ -40,10 +39,8 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  initDB().then(() => {
-    createStore();
-    createWindow();
-  });
+  createStore();
+  createWindow();
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

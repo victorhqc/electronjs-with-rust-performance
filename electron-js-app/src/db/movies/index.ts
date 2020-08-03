@@ -1,11 +1,11 @@
-import { getConnection } from 'typeorm';
+import { Op } from 'sequelize';
+import sequelize from '../connection';
 import { ImdbMovie } from '../../entity/ImdbMovie';
 import { ImdbName } from '../../entity/ImdbName';
 import { ImdbTitlePrincipal } from '../../entity/ImdbTitlePrincipal';
 
 export async function getMoviesTotal() {
-  const conn = getConnection();
-  const total = await conn.getRepository(ImdbMovie).createQueryBuilder('total').getCount();
+  const total = await ImdbMovie.count();
 
   return total;
 }
@@ -17,31 +17,36 @@ export async function searchMoviesByName(name: string): Promise<NameWithMoviesTu
     return Promise.resolve([]);
   }
 
-  const conn = getConnection();
   const result: NameWithMoviesTuple[] = [];
 
-  const actors = await conn
-    .getRepository(ImdbName)
-    .createQueryBuilder('actors')
-    .where('name LIKE :name', { name: `%${name}%` })
-    .orWhere('birth_name LIKE :name', { name: `%${name}%` })
-    .printSql()
-    .getMany();
+  const actors = await ImdbName.findAll({
+    where: {
+      [Op.or]: {
+        name: {
+          [Op.like]: `%${name}%`,
+        },
+        birth_name: {
+          [Op.like]: `%${name}%`,
+        },
+      },
+    },
+  });
 
   for (const actor of actors) {
-    const principals = await conn
-      .getRepository(ImdbTitlePrincipal)
-      .createQueryBuilder('principals')
-      .where('imdb_name_id = :id', { id: actor.imdb_name_id })
-      .getMany();
+    console.log('ACTOR', actor);
+    const principals = await ImdbTitlePrincipal.findAll({
+      where: {
+        imdb_name_id: actor.imdb_name_id,
+      },
+    });
 
     const movies: ImdbMovie[] = [];
     for (const principal of principals) {
-      const movie = await conn
-        .getRepository(ImdbMovie)
-        .createQueryBuilder('movies')
-        .where('imdb_title_id = :id', { id: principal.imdb_title_id })
-        .getOne();
+      const movie = await ImdbMovie.findOne({
+        where: {
+          imdb_title_id: principal.imdb_title_id,
+        },
+      });
 
       movies.push(movie);
     }

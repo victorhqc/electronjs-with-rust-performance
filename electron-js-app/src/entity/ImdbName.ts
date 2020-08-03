@@ -1,64 +1,135 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Model, DataTypes } from 'sequelize';
+import sequelize from '../db/connection';
 
-@Entity({ name: 'imdb_names' })
-export class ImdbName {
-  @PrimaryColumn()
-  imdb_name_id: string;
-
-  @Column()
-  name: string;
-
-  @Column()
-  birth_name: string;
-
-  @Column()
-  height: number;
-
-  @Column({ nullable: true, type: 'text' })
-  bio: string | null;
-
-  @Column({ nullable: true, type: 'text' })
-  birth_details: string | null;
-
-  @Column()
-  birth_year: number;
-
-  @Column({ nullable: true, type: 'text' })
-  date_of_birth: string | null;
-
-  @Column({ nullable: true, type: 'text' })
-  place_of_birth: string | null;
-
-  @Column({ nullable: true, type: 'text' })
-  death_details: string | null;
-
-  @Column({ nullable: true, type: 'integer' })
-  death_year: number | null;
-
-  @Column({ nullable: true, type: 'text' })
-  date_of_death: string | null;
-
-  @Column({ nullable: true, type: 'text' })
-  place_of_death: string | null;
-
-  @Column({ nullable: true, type: 'text' })
-  reason_of_death: string | null;
-
-  @Column()
-  spouses: number;
-
-  @Column()
-  divorces: number;
-
-  @Column()
-  spouses_with_children: number;
-
-  @Column()
-  children: number;
-
-  @Column()
-  primary_profession: string;
-
-  @Column()
-  known_for_titles: string;
+export class ImdbName extends Model {
+  readonly imdb_name_id: string;
+  readonly name: string;
+  readonly birth_name: string;
+  readonly height: number;
+  readonly bio: string | null;
+  readonly birth_details: string | null;
+  readonly birth_year: number;
+  readonly date_of_birth: string | null;
+  readonly place_of_birth: string | null;
+  readonly death_details: string | null;
+  readonly death_year: number | null;
+  readonly date_of_death: string | null;
+  readonly place_of_death: string | null;
+  readonly reason_of_death: string | null;
+  readonly spouses: number;
+  readonly divorces: number;
+  readonly spouses_with_children: number;
+  readonly children: number;
+  readonly primary_profession: string;
+  readonly known_for_titles: string;
 }
+
+ImdbName.init(
+  {
+    imdb_name_id: {
+      primaryKey: true,
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+
+    name: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+
+    birth_name: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+
+    height: {
+      type: DataTypes.NUMBER,
+      allowNull: false,
+    },
+
+    bio: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+
+    birth_details: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+
+    birth_year: {
+      type: DataTypes.NUMBER,
+      allowNull: false,
+    },
+
+    date_of_birth: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+
+    place_of_birth: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+
+    death_details: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+
+    death_year: {
+      type: DataTypes.NUMBER,
+      allowNull: true,
+    },
+
+    date_of_death: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+
+    place_of_death: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+
+    reason_of_death: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+
+    spouses: {
+      type: DataTypes.NUMBER,
+      allowNull: false,
+    },
+
+    divorces: {
+      type: DataTypes.NUMBER,
+      allowNull: false,
+    },
+
+    spouses_with_children: {
+      type: DataTypes.NUMBER,
+      allowNull: false,
+    },
+
+    children: {
+      type: DataTypes.NUMBER,
+      allowNull: false,
+    },
+
+    primary_profession: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+
+    known_for_titles: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    modelName: 'imdb_names',
+    timestamps: false,
+  },
+);
