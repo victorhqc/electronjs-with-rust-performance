@@ -2,7 +2,7 @@
   "name": "neon-bindings",
   "version": "0.1.0",
   "description": "Neon bindings (Native Add-On) for electron application",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "author": "Victor Quiroz <victorhqc@gmail.com>",
   "license": "MIT",
   "scripts": {
