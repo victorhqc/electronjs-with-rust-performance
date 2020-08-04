@@ -1,9 +1,10 @@
-use crate::models::{ImdbMovie, ImdbName, ImdbTitlePrincipal};
+use crate::models::{EnrichedImdbName, ImdbMovie, ImdbName, ImdbTitlePrincipal};
 use crate::DbPool;
 use diesel::prelude::*;
 use snafu::{ResultExt, Snafu};
+use std::cmp::Ordering::Equal;
 
-pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<NameWithMovies>> {
+pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<EnrichedImdbName>> {
     let conn = pool.get().context(GetConnection)?;
 
     let names: Vec<ImdbName> = {
@@ -17,7 +18,7 @@ pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<NameWith
             .context(Query)?
     };
 
-    let mut result: Vec<NameWithMovies> = names.into_iter().fold(vec![], |mut acc, name| {
+    let mut result: Vec<EnrichedImdbName> = names.into_iter().fold(vec![], |mut acc, name| {
         let principals: Vec<ImdbTitlePrincipal> = {
             use crate::schema::imdb_title_principals::dsl::*;
 
@@ -42,28 +43,28 @@ pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<NameWith
         // Sort by metascore
         movies.sort_by(|a, b| b.metascore.cmp(&a.metascore));
 
-        acc.push((name, movies));
+        let metascore = calculate_overall_metascore(&movies);
+        acc.push(EnrichedImdbName {
+            data: name,
+            movies,
+            metascore,
+        });
 
         acc
     });
 
     // Sort by amount of movies
-    result.sort_by(|a, b| b.1.len().cmp(&a.1.len()));
+    result.sort_by(|a, b| b.movies.len().cmp(&a.movies.len()));
 
     // Sort by overall metascore
-    result.sort_by(|a, b| {
-        let b_metascore = calculate_overall_metascore(&b.1);
-        let a_metascore = calculate_overall_metascore(&a.1);
-
-        b_metascore.cmp(&a_metascore)
-    });
+    result.sort_by(|a, b| b.metascore.partial_cmp(&a.metascore).unwrap_or(Equal));
 
     Ok(result)
 }
 
-fn calculate_overall_metascore(m: &Vec<ImdbMovie>) -> i32 {
+fn calculate_overall_metascore(m: &Vec<ImdbMovie>) -> f32 {
     if m.len() == 0 {
-        return 0;
+        return 0.0;
     }
 
     let mut length = m.len();
@@ -77,13 +78,11 @@ fn calculate_overall_metascore(m: &Vec<ImdbMovie>) -> i32 {
     });
 
     if length <= 0 {
-        return 0;
+        return 0.0;
     }
 
-    amount / (length as i32)
+    (amount as f32) / (length as f32)
 }
-
-pub type NameWithMovies = (ImdbName, Vec<ImdbMovie>);
 
 pub type Result<T, E = MoviesError> = std::result::Result<T, E>;
 

@@ -56,6 +56,13 @@ pub struct ImdbName {
     pub known_for_titles: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EnrichedImdbName {
+    pub data: ImdbName,
+    pub metascore: f32,
+    pub movies: Vec<ImdbMovie>,
+}
+
 #[derive(Debug, Clone, Identifiable, Associations, Serialize, Deserialize, Queryable)]
 #[serde(rename_all = "camelCase")]
 #[table_name = "imdb_ratings"]
