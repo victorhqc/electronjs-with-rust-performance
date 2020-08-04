@@ -43,7 +43,7 @@ export const byName: Reducer<MoviesByNameState, MovieAction> = (
     case getType(actions.searchMoviesByName.success):
       return {
         status: 'done',
-        items: action.payload.actors,
+        items: action.payload,
       };
 
     case getType(actions.searchMoviesByName.failure):

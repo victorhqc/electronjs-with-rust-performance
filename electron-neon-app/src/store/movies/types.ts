@@ -1,9 +1,8 @@
 import { AsyncList, AsyncData } from '../../utils/types';
-import { ImdbMovie } from '../../entity/ImdbMovie';
-import { ImdbName } from '../../entity/ImdbName';
+import { ImdbMovie, EnrichedImdbName } from 'neon-bindings';
 
 export type MovieListState = AsyncList<ImdbMovie[]>;
 
 export type MoviesTotalState = AsyncData<number>;
 
-export type MoviesByNameState = AsyncList<Array<[ImdbName, ImdbMovie[]]>>;
+export type MoviesByNameState = AsyncList<EnrichedImdbName[]>;

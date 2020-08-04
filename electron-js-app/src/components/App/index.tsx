@@ -1,15 +1,9 @@
-import React, { FC, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { getMoviesTotal } from '../../store/movies';
+import React, { FC } from 'react';
 import SearchByNames from '../SearchByNames';
 
 import './style.css';
 
-const App: FC<Props> = ({ getTotal }) => {
-  useEffect(() => {
-    getTotal();
-  }, [getTotal]);
-
+const App: FC = () => {
   return (
     <div className="m-2">
       <SearchByNames />
@@ -17,10 +11,4 @@ const App: FC<Props> = ({ getTotal }) => {
   );
 };
 
-const mapDispatchToProps = {
-  getTotal: getMoviesTotal.request,
-};
-
-type Props = typeof mapDispatchToProps;
-
-export default connect(null, mapDispatchToProps)(App);
+export default App;

@@ -1,7 +1,9 @@
 import { app, BrowserWindow } from 'electron';
 import { config } from 'dotenv';
+import { setDBPathIn } from 'neon-bindings';
 
 import createStore from './store/createStore/main';
+const appConfig = require('../config.json');
 
 config({});
 
@@ -39,6 +41,7 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
+  setDBPathIn(appConfig.DATABASE_PATH);
   createStore();
   createWindow();
 });

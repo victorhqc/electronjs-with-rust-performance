@@ -1,11 +1,14 @@
 use crate::models::{EnrichedImdbName, ImdbMovie, ImdbName, ImdbTitlePrincipal};
 use crate::DbPool;
 use diesel::prelude::*;
+use rayon::prelude::*;
 use snafu::{ResultExt, Snafu};
 use std::cmp::Ordering::Equal;
+use std::sync::Mutex;
 
 pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<EnrichedImdbName>> {
     let conn = pool.get().context(GetConnection)?;
+    let m_conn = Mutex::new(pool.get().context(GetConnection)?);
 
     let names: Vec<ImdbName> = {
         use crate::schema::imdb_names::dsl::*;
@@ -18,40 +21,45 @@ pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<Enriched
             .context(Query)?
     };
 
-    let mut result: Vec<EnrichedImdbName> = names.into_iter().fold(vec![], |mut acc, name| {
-        let principals: Vec<ImdbTitlePrincipal> = {
-            use crate::schema::imdb_title_principals::dsl::*;
+    let mut result: Vec<EnrichedImdbName> = names
+        .into_par_iter()
+        .map(|name| {
+            let principals: Vec<ImdbTitlePrincipal> = {
+                use crate::schema::imdb_title_principals::dsl::*;
+                let c = m_conn.lock().unwrap();
 
-            imdb_title_principals
-                .filter(imdb_name_id.eq(&name.imdb_name_id))
-                .load::<ImdbTitlePrincipal>(&conn)
-                .unwrap()
-        };
+                imdb_title_principals
+                    .filter(imdb_name_id.eq(&name.imdb_name_id))
+                    .load::<ImdbTitlePrincipal>(&*c)
+                    .unwrap()
+            };
 
-        let mut movies: Vec<ImdbMovie> = vec![];
-        principals.iter().for_each(|p| {
-            use crate::schema::imdb_movies::dsl::*;
+            let mut movies: Vec<ImdbMovie> = principals
+                .par_iter()
+                .map(|p| {
+                    use crate::schema::imdb_movies::dsl::*;
+                    let c = m_conn.lock().unwrap();
 
-            let movie = imdb_movies
-                .filter(imdb_title_id.eq(&p.imdb_title_id))
-                .get_result::<ImdbMovie>(&conn)
-                .unwrap();
+                    let movie = imdb_movies
+                        .filter(imdb_title_id.eq(&p.imdb_title_id))
+                        .get_result::<ImdbMovie>(&*c)
+                        .unwrap();
 
-            movies.push(movie);
-        });
+                    movie
+                })
+                .collect();
 
-        // Sort by metascore
-        movies.sort_by(|a, b| b.metascore.cmp(&a.metascore));
+            // Sort by metascore
+            movies.sort_by(|a, b| b.metascore.cmp(&a.metascore));
 
-        let metascore = calculate_overall_metascore(&movies);
-        acc.push(EnrichedImdbName {
-            data: name,
-            movies,
-            metascore,
-        });
-
-        acc
-    });
+            let metascore = calculate_overall_metascore(&movies);
+            EnrichedImdbName {
+                data: name,
+                movies,
+                metascore,
+            }
+        })
+        .collect();
 
     // Sort by amount of movies
     result.sort_by(|a, b| b.movies.len().cmp(&a.movies.len()));

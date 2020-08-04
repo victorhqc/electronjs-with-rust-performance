@@ -1,6 +1,5 @@
 import { createAsyncAction } from 'typesafe-actions';
-import { ImdbMovie } from '../../entity/ImdbMovie';
-import { ImdbName } from '../../entity/ImdbName';
+import { ImdbMovie, EnrichedImdbName } from 'neon-bindings';
 import { ErrorLike } from '../../utils/types';
 
 export const getAllMovies = createAsyncAction(
@@ -15,4 +14,4 @@ export const searchMoviesByName = createAsyncAction(
   'movies/search_by_name_success',
   'movies/search_by_name_error',
   'movies/search_by_name_cancel',
-)<string, { actors: Array<[ImdbName, ImdbMovie[]]> }, ErrorLike, void>();
+)<string, EnrichedImdbName[], ErrorLike, void>();

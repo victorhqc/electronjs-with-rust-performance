@@ -40,6 +40,8 @@ module.exports = {
             },
           ],
         },
+        port: 3001,
+        loggerPort: 9002,
       },
     ],
   ],

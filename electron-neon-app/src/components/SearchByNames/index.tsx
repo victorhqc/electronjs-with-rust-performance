@@ -6,7 +6,6 @@ import {
   selectByNameStatus,
 } from '../../store/movies';
 import { ApplicationState } from '../../store';
-import { calculateOverallMetascore } from '../../db/movies';
 
 import './style.css';
 
@@ -46,19 +45,19 @@ const SearchByNames: FC<Props> = ({ search, items, status }) => {
         )}
         {status === 'done' && (
           <ul className="search-by-names__items">
-            {items.map(([person, movies]) => (
-              <div key={person.imdb_name_id} className="search-by-names__item">
+            {items.map(({ data: person, metascore, movies }) => (
+              <div key={person.imdbNameId} className="search-by-names__item">
                 <p className="search-by-names__item--name">
                   {person.name}{' '}
                   <small className="search-by-names__item--birth-name">
-                    <i>{person.birth_name}</i>
+                    <i>{person.birthName}</i>
                   </small>{' '}
-                  (Metascore: <span>{calculateOverallMetascore([person, movies]).toFixed(2)}</span>)
+                  (Metascore: <span>{metascore.toFixed(2)}</span>)
                 </p>
                 <ul className="search-by-names__item--movies">
                   {movies.map((movie) => (
-                    <div key={movie.imdb_title_id} className="search-by-names__item--movie">
-                      <p>{movie.original_title}</p>
+                    <div key={movie.imdbTitleId} className="search-by-names__item--movie">
+                      <p>{movie.originalTitle}</p>
                       <p>Metascore: {movie.metascore}</p>
                     </div>
                   ))}
