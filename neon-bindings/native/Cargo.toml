@@ -12,6 +12,7 @@ name = "neon_bindings"
 crate-type = ["cdylib"]
 
 [build-dependencies]
+# neon-build = { git = "https://github.com/neon-bindings/neon.git" }
 neon-build = "0.4.0"
 
 [dependencies]

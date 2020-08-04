@@ -1,38 +1,24 @@
 import { callNative } from './utils';
 
-export type GetMoviesArgs = BollywoodArgs & PaginationArgs;
-export function getMovies(args: GetMoviesArgs): Promise<ImdbMovie[]> {
-  return callNative('getMovies', args);
+type SearchMoviesByNameArgs = { needle: string };
+export function searchMoviesByName(args: SearchMoviesByNameArgs): Promise<EnrichedImdbName> {
+  return callNative('searchMoviesByName', args);
 }
 
-export function getTotalMovies(args: BollywoodArgs): Promise<Number> {
-  return callNative('getTotalMovies', args);
-}
-
-export type GetRatedMoviesByYearArgs = BollywoodArgs & PaginationArgs & { year: Number };
-export function getRatedMoviesByYear(args: GetRatedMoviesByYearArgs): Promise<ImdbMovie[]> {
-  return callNative('getRatedMoviesByYear', args);
-}
-
-export type GetRatedMoviesByGenderInYearArgs = BollywoodArgs &
-  PaginationArgs & {
-    year: Number;
-    gender: Gender;
-  };
-export function getRatedMoviesByGenderInYear(
-  args: GetRatedMoviesByGenderInYearArgs,
-): Promise<[ImdbMovie, ImdbRatings][]> {
-  return callNative('getRatedMoviesByGenderInYear', args);
-}
+export type EnrichedImdbName = {
+  data: ImdbName;
+  metascore: number;
+  movies: ImdbMovie[];
+};
 
 export type ImdbMovie = {
   imdbTitleId: string;
   title: string;
   original_title: string;
-  year: Number;
+  year: number;
   date_published: string;
   genre: string;
-  duration: Number;
+  duration: number;
   country: string;
   language: string;
   director: string;
@@ -40,76 +26,88 @@ export type ImdbMovie = {
   production_company: string;
   actors: string;
   description: string;
-  avg_vote: Number;
-  votes: Number;
+  avg_vote: number;
+  votes: number;
   budget: string;
-  usa_gross_income: Number;
-  worlwide_gross_income: Number;
-  metascore: Number;
-  reviews_from_users: Number;
-  reviews_from_critics: Number;
+  usa_gross_income: number;
+  worlwide_gross_income: number;
+  metascore: number;
+  reviews_from_users: number;
+  reviews_from_critics: number;
+};
+
+export type ImdbName = {
+  imdb_name_id: string;
+  name: string;
+  birth_name: string;
+  height: number;
+  bio: string | null;
+  birth_details: string | null;
+  birth_year: number;
+  date_of_birth: string | null;
+  place_of_birth: string | null;
+  death_details: string | null;
+  death_year: number | null;
+  date_of_death: string | null;
+  place_of_death: string | null;
+  reason_of_death: string | null;
+  spouses: number;
+  divorces: number;
+  spouses_with_children: number;
+  children: number;
+  primary_profession: string;
+  known_for_titles: string;
 };
 
 export type ImdbRatings = {
-  imdb_rating_id: Number;
+  imdb_rating_id: number;
   imdb_title_id: string;
-  weighted_average_vote: Number;
-  total_votes: Number;
-  mean_vote: Number;
-  median_vote: Number;
-  votes_10: Number;
-  votes_9: Number;
-  votes_8: Number;
-  votes_7: Number;
-  votes_6: Number;
-  votes_5: Number;
-  votes_4: Number;
-  votes_3: Number;
-  votes_2: Number;
-  votes_1: Number;
-  allgenders_0age_avg_vote: Number;
-  allgenders_0age_votes: Number;
-  allgenders_18age_avg_vote: Number;
-  allgenders_18age_votes: Number;
-  allgenders_30age_avg_vote: Number;
-  allgenders_30age_votes: Number;
-  allgenders_45age_avg_vote: Number;
-  allgenders_45age_votes: Number;
-  males_allages_avg_vote: Number;
-  males_allages_votes: Number;
-  males_0age_avg_vote: Number;
-  males_0age_votes: Number;
-  males_18age_avg_vote: Number;
-  males_18age_votes: Number;
-  males_30age_avg_vote: Number;
-  males_30age_votes: Number;
-  males_45age_avg_vote: Number;
-  males_45age_votes: Number;
-  females_allages_avg_vote: Number;
-  females_allages_votes: Number;
-  females_0age_avg_vote: Number;
-  females_0age_votes: Number;
-  females_18age_avg_vote: Number;
-  females_18age_votes: Number;
-  females_30age_avg_vote: Number;
-  females_30age_votes: Number;
-  females_45age_avg_vote: Number;
-  females_45age_votes: Number;
-  top1000_voters_rating: Number;
-  top1000_voters_votes: Number;
-  us_voters_rating: Number;
-  us_voters_votes: Number;
-  non_us_voters_rating: Number;
-  non_us_voters_votes: Number;
+  weighted_average_vote: number;
+  total_votes: number;
+  mean_vote: number;
+  median_vote: number;
+  votes_10: number;
+  votes_9: number;
+  votes_8: number;
+  votes_7: number;
+  votes_6: number;
+  votes_5: number;
+  votes_4: number;
+  votes_3: number;
+  votes_2: number;
+  votes_1: number;
+  allgenders_0age_avg_vote: number;
+  allgenders_0age_votes: number;
+  allgenders_18age_avg_vote: number;
+  allgenders_18age_votes: number;
+  allgenders_30age_avg_vote: number;
+  allgenders_30age_votes: number;
+  allgenders_45age_avg_vote: number;
+  allgenders_45age_votes: number;
+  males_allages_avg_vote: number;
+  males_allages_votes: number;
+  males_0age_avg_vote: number;
+  males_0age_votes: number;
+  males_18age_avg_vote: number;
+  males_18age_votes: number;
+  males_30age_avg_vote: number;
+  males_30age_votes: number;
+  males_45age_avg_vote: number;
+  males_45age_votes: number;
+  females_allages_avg_vote: number;
+  females_allages_votes: number;
+  females_0age_avg_vote: number;
+  females_0age_votes: number;
+  females_18age_avg_vote: number;
+  females_18age_votes: number;
+  females_30age_avg_vote: number;
+  females_30age_votes: number;
+  females_45age_avg_vote: number;
+  females_45age_votes: number;
+  top1000_voters_rating: number;
+  top1000_voters_votes: number;
+  us_voters_rating: number;
+  us_voters_votes: number;
+  non_us_voters_rating: number;
+  non_us_voters_votes: number;
 };
-
-export type BollywoodArgs = {
-  bolywood?: boolean | null;
-};
-
-export type PaginationArgs = {
-  page: Number;
-  pageSize?: Number | null;
-};
-
-export type Gender = 'Male' | 'Female';

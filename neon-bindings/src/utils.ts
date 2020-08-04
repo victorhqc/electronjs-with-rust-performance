@@ -24,8 +24,4 @@ export function callNative<T>(methodName: MethodName, args?: unknown): Promise<T
   });
 }
 
-export type MethodName =
-  | 'getMovies'
-  | 'getTotalMovies'
-  | 'getRatedMoviesByYear'
-  | 'getRatedMoviesByGenderInYear';
+export type MethodName = 'searchMoviesByName';
