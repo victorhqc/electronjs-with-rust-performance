@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { Op, where } from 'sequelize';
 import sequelize from '../connection';
 import { ImdbMovie } from '../../entity/ImdbMovie';
 import { ImdbName } from '../../entity/ImdbName';
@@ -43,16 +43,15 @@ export async function searchMoviesByName(name: string): Promise<NameWithMoviesTu
       })
     ).map<ImdbTitlePrincipal>((p) => p.get());
 
-    const movies: ImdbMovie[] = [];
-    for (const principal of principals) {
-      const movie = await ImdbMovie.findOne({
-        where: {
-          imdb_title_id: principal.imdb_title_id,
-        },
-      });
+    const whereIds = principals.map((p) => ({ imdb_title_id: p.imdb_title_id }));
 
-      movies.push(movie.get());
-    }
+    const movies = (
+      await ImdbMovie.findAll({
+        where: {
+          [Op.or]: whereIds,
+        },
+      })
+    ).map<ImdbMovie>((m) => m.get());
 
     result.push([actor, movies.sort(byMetascore).reverse()]);
   }

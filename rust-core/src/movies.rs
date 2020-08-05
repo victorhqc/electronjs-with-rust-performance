@@ -4,16 +4,11 @@ use diesel::prelude::*;
 use rayon::prelude::*;
 use snafu::{ResultExt, Snafu};
 use std::cmp::Ordering::Equal;
-// use std::sync::Mutex;
-use std::sync::Arc;
-// use threads_pool::*;
+use std::sync::{Arc, Mutex};
 
 pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<EnrichedImdbName>> {
     let conn = pool.get().context(GetConnection)?;
-    // let m_conn = Mutex::new(pool.get().context(GetConnection)?);
-    // let a_conn = Arc::new(pool.get().context(GetConnection)?);
-    // let t_pool = ThreadPool::new(12);
-    let arc_pool = Arc::new(pool);
+    let arc_pool = Arc::new(Mutex::new(pool.clone()));
 
     let names: Vec<ImdbName> = {
         use crate::schema::imdb_names::dsl::*;
@@ -26,24 +21,11 @@ pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<Enriched
             .context(Query)?
     };
 
-    // let m_result = Mutex::new(Vec::mew<EnrichedImdbName>());
-
-    // Split the work in chunks of 1_000
-    // for chunk in names.chunks(1000) {
-    //     t_pool.execute(move || {
-    //         let conn = a_conn.clone();
-
-    //         let principals: Vec<ImdbTitlePrincipal> = {
-    //             use crate
-    //         };
-    //     });
-    // }
-
     let mut result: Vec<EnrichedImdbName> = names
         .into_par_iter()
         .map(move |name| {
-            let p = Arc::clone(&arc_pool);
-            let conn = p.get().unwrap();
+            let pool = Arc::clone(&arc_pool);
+            let conn = pool.lock().unwrap().get().unwrap();
             let principals: Vec<ImdbTitlePrincipal> = {
                 use crate::schema::imdb_title_principals::dsl::*;
 
@@ -53,20 +35,21 @@ pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<Enriched
                     .unwrap()
             };
 
-            let mut movies: Vec<ImdbMovie> = principals
+            let movie_ids: Vec<String> = principals
                 .par_iter()
-                .map(move |principal| {
-                    use crate::schema::imdb_movies::dsl::*;
-                    let conn = p.get().unwrap();
-
-                    let movie: ImdbMovie = imdb_movies
-                        .filter(imdb_title_id.eq(&principal.imdb_title_id))
-                        .get_result::<ImdbMovie>(&conn)
-                        .unwrap();
-
-                    movie
-                })
+                .map(|p| p.imdb_title_id.clone())
                 .collect();
+
+            let mut movies: Vec<ImdbMovie> = {
+                use crate::schema::imdb_movies::dsl::*;
+
+                let mut query = imdb_movies.into_boxed();
+                for id in movie_ids {
+                    query = query.or_filter(imdb_title_id.eq(id));
+                }
+
+                query.get_results::<ImdbMovie>(&conn).unwrap()
+            };
 
             // Sort by metascore
             movies.sort_by(|a, b| b.metascore.cmp(&a.metascore));

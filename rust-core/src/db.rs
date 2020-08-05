@@ -31,7 +31,7 @@ impl Default for ConnectionOptions {
     fn default() -> Self {
         Self {
             enable_foreign_keys: true,
-            busy_timeout: Some(Duration::from_millis(1)),
+            busy_timeout: Some(Duration::from_millis(100)),
         }
     }
 }

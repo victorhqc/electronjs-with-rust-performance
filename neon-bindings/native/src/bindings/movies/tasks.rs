@@ -7,6 +7,7 @@ use rust_core::{
     DbError,
 };
 use snafu::{ResultExt, Snafu};
+use std::result::Result;
 
 pub struct SearchMoviesByNameTask {
     pub needle: String,
@@ -17,13 +18,10 @@ impl Task for SearchMoviesByNameTask {
     type Output = Vec<EnrichedImdbName>;
     type Error = MoviesTaskError;
     type JsEvent = JsValue;
-
     fn perform(&self) -> Result<Self::Output, Self::Error> {
-        let names: Vec<EnrichedImdbName> = {
-            let pool = db_pool(self.db_path.clone()).context(DBIssue)?;
-
-            search_movies_by_name(&pool, &self.needle).context(MoviesIssue)?
-        };
+        let pool = db_pool(self.db_path.clone()).context(DBIssue)?;
+        let names: Vec<EnrichedImdbName> =
+            search_movies_by_name(&pool, &self.needle).context(MoviesIssue)?;
 
         Ok(names)
     }
@@ -31,17 +29,20 @@ impl Task for SearchMoviesByNameTask {
     fn complete(
         self,
         mut cx: TaskContext,
-        result: Result<Self::Output>,
+        result: Result<Self::Output, Self::Error>,
     ) -> JsResult<Self::JsEvent> {
-        let data = to_value(&mut cx, &result.unwrap())
-            .context(Serialization)
-            .unwrap();
-
-        Ok(data)
+        match result {
+            Err(err) => cx.throw_error(format!("Something went wrong: {:?}", err)),
+            Ok(d) => {
+                let res = match to_value(&mut cx, &d) {
+                    Err(err) => cx.throw_error(format!("Something went wrong: {:?}", err)),
+                    Ok(r) => Ok(r),
+                };
+                res
+            }
+        }
     }
 }
-
-type Result<T, E = MoviesTaskError> = std::result::Result<T, E>;
 
 #[derive(Debug, Snafu)]
 pub enum MoviesTaskError {
