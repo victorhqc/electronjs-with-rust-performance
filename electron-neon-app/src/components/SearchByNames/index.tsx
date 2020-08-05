@@ -11,32 +11,51 @@ import './style.css';
 
 const SearchByNames: FC<Props> = ({ search, items, status }) => {
   const [needle, setNeedle] = useState('');
+  const [parallel, setParallel] = useState(false);
 
   const handleSubmit = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
 
-      search(needle);
+      search({ needle, parallel });
     },
-    [search, needle],
+    [search, needle, parallel],
   );
 
   const handleType = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setNeedle(e.target.value);
   }, []);
 
+  const handleParallelClick = useCallback(() => {
+    setParallel((p) => !p);
+  }, []);
+
   return (
     <div className="search-by-names" data-testid="search-by-names">
       <h1 className="search-by-names__title">Search Hollywood Stars ⭐</h1>
       <form className="search-by-names__form" onSubmit={handleSubmit}>
-        <input
-          className="search-by-names__input"
-          type="text"
-          value={needle}
-          onChange={handleType}
-          placeholder="Type a name..."
-        />
-        <button className="search-by-names__button">Search</button>
+        <div>
+          <input
+            className="search-by-names__input"
+            type="text"
+            value={needle}
+            onChange={handleType}
+            placeholder="Type a name..."
+          />
+          <button className="search-by-names__button">Search</button>
+        </div>
+        <div>
+          <label className="search-by-names__input-label" htmlFor="parallel-input">
+            Parallel?
+          </label>
+          <input
+            type="checkbox"
+            id="parallel-input"
+            className="search-by-names__checkbox"
+            checked={parallel}
+            onChange={handleParallelClick}
+          />
+        </div>
       </form>
       <div className="search-by-names__items-wrapper">
         {status === 'loading' && <h2>Loading...</h2>}

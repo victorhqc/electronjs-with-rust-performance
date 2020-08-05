@@ -31,7 +31,7 @@ function* searchMoviesByNameFlow() {
 function* handleSearchByName(action: ActionType<typeof search.request>) {
   try {
     const t0 = performance.now();
-    const result = yield* call(searchMoviesByName, { needle: action.payload });
+    const result = yield* call(searchMoviesByName, action.payload);
     const t1 = performance.now();
     console.log(`Search took: ${t1 - t0} milliseconds.`);
     yield put(search.success(result));

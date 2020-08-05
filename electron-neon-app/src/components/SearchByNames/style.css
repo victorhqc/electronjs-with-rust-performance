@@ -45,3 +45,7 @@
 .search-by-names__item--movie {
   @apply p-2 rounded-md border-gray-300 shadow;
 }
+
+.search-by-names__input-label {
+  @apply mr-2;
+}

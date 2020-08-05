@@ -14,4 +14,4 @@ export const searchMoviesByName = createAsyncAction(
   'movies/search_by_name_success',
   'movies/search_by_name_error',
   'movies/search_by_name_cancel',
-)<string, EnrichedImdbName[], ErrorLike, void>();
+)<{ needle: string; parallel: boolean }, EnrichedImdbName[], ErrorLike, void>();

@@ -8,6 +8,7 @@ mod tasks;
 #[serde(rename_all = "camelCase")]
 pub struct SearchMoviesArgs {
     needle: String,
+    parallel: bool,
 }
 
 pub fn search_movies_by_name(mut cx: FunctionContext) -> JsResult<JsUndefined> {
@@ -21,6 +22,7 @@ pub fn search_movies_by_name(mut cx: FunctionContext) -> JsResult<JsUndefined> {
 
     let task = tasks::SearchMoviesByNameTask {
         needle: args.needle,
+        parallel: args.parallel,
         db_path: config.db_path,
     };
     task.schedule(cb);

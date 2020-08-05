@@ -1,6 +1,6 @@
 import { callNative } from './utils';
 
-type SearchMoviesByNameArgs = { needle: string };
+type SearchMoviesByNameArgs = { needle: string; parallel: boolean };
 export function searchMoviesByName(args: SearchMoviesByNameArgs): Promise<EnrichedImdbName[]> {
   return callNative('searchMoviesByName', args);
 }
