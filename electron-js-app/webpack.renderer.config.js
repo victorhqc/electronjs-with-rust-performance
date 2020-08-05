@@ -40,4 +40,10 @@ module.exports = {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
   },
   externals: [getExternalsFn()],
+  devServer: {
+    historyApiFallback: true,
+  },
+  output: {
+    publicPath: '/',
+  },
 };
