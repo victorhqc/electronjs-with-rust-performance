@@ -22,3 +22,13 @@ fn search_brad() {
 
     assert!(names.len() > 0);
 }
+
+#[test]
+fn search_twice() {
+    let pool = db_pool();
+
+    let names = search_movies_by_name(&pool, "brad pitt").unwrap();
+    assert!(names.len() > 0);
+    let names = search_movies_by_name(&pool, "brad pitt").unwrap();
+    assert!(names.len() > 0);
+}
