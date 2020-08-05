@@ -63,6 +63,12 @@ pub struct EnrichedImdbName {
     pub movies: Vec<ImdbMovie>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ImdbNameWithMoviesAndActresses {
+    pub data: ImdbName,
+    pub movies: Vec<(ImdbMovie, Vec<ImdbName>)>,
+}
+
 #[derive(Debug, Clone, Identifiable, Associations, Serialize, Deserialize, Queryable)]
 #[serde(rename_all = "camelCase")]
 #[table_name = "imdb_ratings"]
