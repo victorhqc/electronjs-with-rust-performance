@@ -2,10 +2,9 @@ mod common;
 
 use common::db_pool;
 use rust_core::movies::{
-    parallel_search_movies_by_name, search_movies_by_name,
-    search_movies_where_actress_is_taller_than_star,
+    parallel_search_movies_by_name, parallel_search_movies_where_actress_is_taller_than_star,
+    search_movies_by_name, search_movies_where_actress_is_taller_than_star,
 };
-use std::env;
 
 #[test]
 fn search_brad_pitt() {
@@ -46,4 +45,16 @@ fn search_taller() {
 
     assert_eq!(names[0].movies[0].1[0].name, "Eva Birthistle".to_string());
     assert_eq!(names[0].movies[0].1[0].height, 200);
+}
+
+#[test]
+fn search_parallel_taller() {
+    let pool = db_pool();
+
+    let names =
+        parallel_search_movies_where_actress_is_taller_than_star(&pool, "liam neeson").unwrap();
+    assert!(names.len() > 0);
+    let names =
+        parallel_search_movies_where_actress_is_taller_than_star(&pool, "liam neeson").unwrap();
+    assert!(names.len() > 0);
 }
