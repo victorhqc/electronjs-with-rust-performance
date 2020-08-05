@@ -1,8 +1,8 @@
-import { Op, where } from 'sequelize';
-import sequelize from '../connection';
+import { Op } from 'sequelize';
 import { ImdbMovie } from '../../entity/ImdbMovie';
 import { ImdbName } from '../../entity/ImdbName';
 import { ImdbTitlePrincipal } from '../../entity/ImdbTitlePrincipal';
+import { TallerThanTuple, NameWithMoviesTuple } from '../../store/movies';
 
 export async function getMoviesTotal() {
   const total = await ImdbMovie.count();
@@ -10,8 +10,92 @@ export async function getMoviesTotal() {
   return total;
 }
 
+export async function searchMoviesWhereActressIsTallerThan(
+  name: string,
+): Promise<TallerThanTuple[]> {
+  if (name.length <= 2) {
+    return Promise.resolve([]);
+  }
+
+  const result: TallerThanTuple[] = [];
+  const actors = await findActorsBy(name);
+
+  for (const actor of actors) {
+    const principals = await findPrincipalsFrom(actor);
+    const whereIds = principals.map((p) => ({ imdb_title_id: p.imdb_title_id }));
+
+    const coActressesPrincipal = (
+      await ImdbTitlePrincipal.findAll({
+        where: {
+          [Op.or]: whereIds,
+          [Op.and]: {
+            category: 'actress',
+          },
+        },
+      })
+    ).map<ImdbTitlePrincipal>((p) => p.get());
+
+    const coActressesIds = coActressesPrincipal.map((a) => ({ imdb_name_id: a.imdb_name_id }));
+    // Get all the actresses that are taller than the actor.
+    const actresses = (
+      await ImdbName.findAll({
+        where: {
+          [Op.or]: coActressesIds,
+        },
+      })
+    )
+      .map<ImdbName>((a) => a.get())
+      .filter((a) => (a.height || 0) > actor.height);
+
+    const filteredCoActressesPrincipal = coActressesPrincipal.filter((principal) => {
+      const index = actresses.findIndex((a) => a.imdb_name_id === principal.imdb_name_id);
+
+      return index >= 0;
+    });
+
+    const filteredPrincipals = principals.filter((principal) => {
+      const index = filteredCoActressesPrincipal.findIndex(
+        (actressPrincipal) => actressPrincipal.imdb_title_id === principal.imdb_title_id,
+      );
+
+      return index >= 0;
+    });
+    const filteredPrincipalIds = filteredPrincipals.map((p) => ({
+      imdb_title_id: p.imdb_title_id,
+    }));
+
+    const movies = await searchtMoviesFrom(filteredPrincipalIds);
+    const moviesWithActresses = movies
+      .map((movie) => {
+        const actressesInMovie = filteredCoActressesPrincipal
+          .filter((principal) => {
+            return principal.imdb_title_id === movie.imdb_title_id;
+          })
+          .map((principal) => {
+            return actresses.find((a) => a.imdb_name_id === principal.imdb_name_id);
+          });
+
+        return {
+          movie,
+          actress: actressesInMovie,
+        };
+      })
+      .filter(({ actress }) => actress.length > 0);
+
+    result.push([actor, moviesWithActresses]);
+  }
+
+  return result;
+}
+
 // Why not joins? Primarily to stress the JavaScript side, as it may actually be needed in some
 // kind of applications as stated here: https://github.com/petehunt/rowrm#why-cant-i-do-joins
+/**
+ * Searches actors/people by name and finds the movies they participated in. The result gets ordered
+ * by metascore.
+ *
+ * @param name
+ */
 export async function searchMoviesByName(name: string): Promise<NameWithMoviesTuple[]> {
   if (name.length <= 2) {
     return Promise.resolve([]);
@@ -19,6 +103,21 @@ export async function searchMoviesByName(name: string): Promise<NameWithMoviesTu
 
   const result: NameWithMoviesTuple[] = [];
 
+  const actors = await findActorsBy(name);
+
+  for (const actor of actors) {
+    const principals = await findPrincipalsFrom(actor);
+
+    const whereIds = principals.map((p) => ({ imdb_title_id: p.imdb_title_id }));
+    const movies = await searchtMoviesFrom(whereIds);
+
+    result.push([actor, movies.sort(byMetascore).reverse()]);
+  }
+
+  return result.sort(byMoviesAmount).sort(byMoviesOverallMetascore).reverse();
+}
+
+async function findActorsBy(name: string) {
   const actors = (
     await ImdbName.findAll({
       where: {
@@ -34,29 +133,31 @@ export async function searchMoviesByName(name: string): Promise<NameWithMoviesTu
     })
   ).map<ImdbName>((a) => a.get());
 
-  for (const actor of actors) {
-    const principals = (
-      await ImdbTitlePrincipal.findAll({
-        where: {
-          imdb_name_id: actor.imdb_name_id,
-        },
-      })
-    ).map<ImdbTitlePrincipal>((p) => p.get());
+  return actors;
+}
 
-    const whereIds = principals.map((p) => ({ imdb_title_id: p.imdb_title_id }));
+async function findPrincipalsFrom(actor: ImdbName) {
+  const principals = (
+    await ImdbTitlePrincipal.findAll({
+      where: {
+        imdb_name_id: actor.imdb_name_id,
+      },
+    })
+  ).map<ImdbTitlePrincipal>((p) => p.get());
 
-    const movies = (
-      await ImdbMovie.findAll({
-        where: {
-          [Op.or]: whereIds,
-        },
-      })
-    ).map<ImdbMovie>((m) => m.get());
+  return principals;
+}
 
-    result.push([actor, movies.sort(byMetascore).reverse()]);
-  }
+async function searchtMoviesFrom(ids: { imdb_title_id: string }[]) {
+  const movies = (
+    await ImdbMovie.findAll({
+      where: {
+        [Op.or]: ids,
+      },
+    })
+  ).map<ImdbMovie>((m) => m.get());
 
-  return result.sort(byMoviesAmount).sort(byMoviesOverallMetascore).reverse();
+  return movies;
 }
 
 function byMoviesAmount(a: NameWithMoviesTuple, b: NameWithMoviesTuple) {
@@ -117,5 +218,3 @@ export function calculateOverallMetascore([_, movies]: NameWithMoviesTuple): num
 
   return amount / length;
 }
-
-type NameWithMoviesTuple = [ImdbName, ImdbMovie[]];
