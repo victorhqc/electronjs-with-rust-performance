@@ -1,0 +1,51 @@
+.search-taller {
+  @apply m-2;
+}
+
+.search-taller__title {
+  @apply text-2xl mb-2;
+}
+
+.search-taller__no-results {
+  @apply text-4xl text-gray-500;
+}
+
+.search-taller__form {
+  @apply mb-4;
+}
+
+.search-taller__input {
+  @apply p-2 rounded-md border border-gray-500;
+}
+
+.search-taller__button {
+  @apply p-2 ml-4 rounded-md bg-green-500 border border-green-700 cursor-pointer shadow;
+}
+
+.search-taller__button:hover {
+  @apply shadow-md;
+}
+
+.search-taller__button:active {
+  @apply bg-green-600 border-green-800 shadow-sm;
+}
+
+.search-taller__item {
+  @apply my-2;
+}
+
+.search-taller__item--name {
+  @apply text-xl;
+}
+
+.search-taller__item--movies {
+  @apply grid grid-cols-4 gap-2;
+}
+
+.search-taller__item--movie {
+  @apply p-2 rounded-md border-gray-300 shadow;
+}
+
+.search-taller__input-label {
+  @apply mr-2;
+}

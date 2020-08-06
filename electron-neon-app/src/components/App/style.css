@@ -1,3 +1,11 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+.menu_item-wrapper {
+  @apply flex;
+}
+
+.menu_item {
+  @apply mx-2;
+}

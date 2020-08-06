@@ -24,6 +24,3 @@ export const searchMoviesWhereActressIsTaller = createAsyncAction(
   'movies/taller_actress_error',
   'movies/taller_actress_cancel',
 )<string, { result: Array<TallerThanTuple> }, ErrorLike, void>();
-
-// @ts-ignore
-global.searchMoviesWhereActressIsTaller = searchMoviesWhereActressIsTaller;
