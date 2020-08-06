@@ -1,14 +1,26 @@
 import { callNative } from './utils';
 
-type SearchMoviesByNameArgs = { needle: string; parallel: boolean };
-export function searchMoviesByName(args: SearchMoviesByNameArgs): Promise<EnrichedImdbName[]> {
+export function searchMoviesByName(args: SearchWithNeedleArgs): Promise<EnrichedImdbName[]> {
   return callNative('searchMoviesByName', args);
 }
+
+export function searchMoviesWhereActressIsTaller(
+  args: SearchWithNeedleArgs,
+): Promise<ImdbNameWithMoviesAndActresses[]> {
+  return callNative('searchMoviesWhereActressIsTaller', args);
+}
+
+type SearchWithNeedleArgs = { needle: string; parallel: boolean };
 
 export type EnrichedImdbName = {
   data: ImdbName;
   metascore: number;
   movies: ImdbMovie[];
+};
+
+export type ImdbNameWithMoviesAndActresses = {
+  data: ImdbName;
+  movies: Array<[ImdbMovie, Array<ImdbName>]>;
 };
 
 export type ImdbMovie = {

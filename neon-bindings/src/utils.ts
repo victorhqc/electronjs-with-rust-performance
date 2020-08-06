@@ -24,4 +24,4 @@ export function callNative<T>(methodName: MethodName, args?: unknown): Promise<T
   });
 }
 
-export type MethodName = 'searchMoviesByName';
+export type MethodName = 'searchMoviesByName' | 'searchMoviesWhereActressIsTaller';

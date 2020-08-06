@@ -12,5 +12,10 @@ register_module!(mut cx, {
         bindings::movies::search_movies_by_name,
     )?;
 
+    cx.export_function(
+        "searchMoviesWhereActressIsTaller",
+        bindings::movies::search_movies_where_actress_is_taller,
+    )?;
+
     Ok(())
 });
