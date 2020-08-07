@@ -1,7 +1,8 @@
 use diesel::connection::SimpleConnection;
+#[cfg(feature = "parallel")]
 use diesel::r2d2::{ConnectionManager, Pool};
 use diesel::result::QueryResult;
-use diesel::SqliteConnection;
+use diesel::{Connection, SqliteConnection};
 use diesel_migrations::embed_migrations;
 use snafu::{ResultExt, Snafu};
 use std::env;
@@ -36,6 +37,7 @@ impl Default for ConnectionOptions {
     }
 }
 
+#[cfg(feature = "parallel")]
 impl diesel::r2d2::CustomizeConnection<SqliteConnection, diesel::r2d2::Error>
     for ConnectionOptions
 {
@@ -44,7 +46,8 @@ impl diesel::r2d2::CustomizeConnection<SqliteConnection, diesel::r2d2::Error>
     }
 }
 
-pub fn db_pool(url: Option<String>) -> Result<DbPool> {
+#[cfg(feature = "parallel")]
+pub fn db_pool(url: Option<String>) -> Result<DbPool, DbError> {
     let database_url = match url {
         Some(u) => format!("{}", u),
         None => env::var("DATABASE_URL").unwrap_or_else(|_| "./imdb.db".to_string()),
@@ -56,25 +59,37 @@ pub fn db_pool(url: Option<String>) -> Result<DbPool> {
     Ok(pool)
 }
 
-pub fn db_migrate(pool: &DbPool) -> Result<()> {
-    let conn = pool.get().expect("Couldn't get DB connection");
+pub fn connect(url: Option<String>) -> Result<Conn, DbError> {
+    let database_url = match url {
+        Some(u) => format!("{}", u),
+        None => env::var("DATABASE_URL").unwrap_or_else(|_| "./imdb.db".to_string()),
+    };
 
-    embedded_migrations::run_with_output(&conn, &mut std::io::stdout()).context(Migration)?;
+    let conn = SqliteConnection::establish(&database_url)
+        .expect(&format!("Error connecting to {}", database_url));
+
+    Ok(conn)
+}
+
+pub fn db_migrate(conn: &Conn) -> Result<(), DbError> {
+    embedded_migrations::run_with_output(conn, &mut std::io::stdout()).context(Migration)?;
 
     Ok(())
 }
 
+#[cfg(feature = "parallel")]
 pub type DbPool = Pool<ConnectionManager<SqliteConnection>>;
+
+pub type Conn = SqliteConnection;
 
 #[derive(Debug, Snafu)]
 pub enum DbError {
-    #[snafu(display("Could not build pool connection: {}", source))]
-    BuildPool { source: diesel::r2d2::PoolError },
-
     #[snafu(display("Failed to run migrations: {}", source))]
     Migration {
         source: diesel_migrations::RunMigrationsError,
     },
-}
 
-pub type Result<T, E = DbError> = std::result::Result<T, E>;
+    #[cfg(feature = "parallel")]
+    #[snafu(display("Could not build pool connection: {}", source))]
+    BuildPool { source: diesel::r2d2::PoolError },
+}

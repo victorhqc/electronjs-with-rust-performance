@@ -10,8 +10,9 @@ use std::time::Instant;
 #[test]
 fn search_brad_pitt() {
     let pool = db_pool();
+    let conn = pool.get().unwrap();
 
-    let names = search_movies_by_name(&pool, "brad pitt").unwrap();
+    let names = search_movies_by_name(&conn, "brad pitt").unwrap();
 
     assert_eq!(names[0].data.name, "Brad Pitt".to_string());
     assert_eq!(names[0].metascore, 61.058823);
@@ -21,8 +22,9 @@ fn search_brad_pitt() {
 #[test]
 fn search_brad() {
     let pool = db_pool();
+    let conn = pool.get().unwrap();
 
-    let names = search_movies_by_name(&pool, "brad").unwrap();
+    let names = search_movies_by_name(&conn, "brad").unwrap();
 
     assert!(names.len() > 0);
 }
@@ -40,8 +42,9 @@ fn search_twice() {
 #[test]
 fn search_taller() {
     let pool = db_pool();
+    let conn = pool.get().unwrap();
 
-    let names = search_movies_where_actress_is_taller_than_star(&pool, "liam neeson").unwrap();
+    let names = search_movies_where_actress_is_taller_than_star(&conn, "liam neeson").unwrap();
     assert!(names.len() > 0);
 }
 
@@ -60,9 +63,10 @@ fn search_parallel_taller() {
 #[test]
 fn search_liam() {
     let pool = db_pool();
+    let conn = pool.get().unwrap();
 
     let start = Instant::now();
-    let names = search_movies_where_actress_is_taller_than_star(&pool, "liam").unwrap();
+    let names = search_movies_where_actress_is_taller_than_star(&conn, "liam").unwrap();
     let duration = start.elapsed();
     println!("Time elapsed searching for liam is: {:?}", duration);
 

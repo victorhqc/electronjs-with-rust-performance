@@ -24,9 +24,10 @@ impl Task for SearchMoviesByNameTask {
     type JsEvent = JsValue;
     fn perform(&self) -> Result<Self::Output, Self::Error> {
         let pool = db_pool(self.db_path.clone()).context(DBIssue)?;
+        let conn = pool.get().unwrap();
         let names: Vec<EnrichedImdbName> = match self.parallel {
             true => parallel_search_movies_by_name(&pool, &self.needle).context(MoviesIssue)?,
-            false => search_movies_by_name(&pool, &self.needle).context(MoviesIssue)?,
+            false => search_movies_by_name(&conn, &self.needle).context(MoviesIssue)?,
         };
 
         Ok(names)
@@ -62,10 +63,12 @@ impl Task for SearchMoviesWhereTallerTask {
     type JsEvent = JsValue;
     fn perform(&self) -> Result<Self::Output, Self::Error> {
         let pool = db_pool(self.db_path.clone()).context(DBIssue)?;
+        let conn = pool.get().unwrap();
+
         let names: Vec<ImdbNameWithMoviesAndActresses> = match self.parallel {
             true => parallel_search_movies_where_actress_is_taller_than_star(&pool, &self.needle)
                 .context(MoviesIssue)?,
-            false => search_movies_where_actress_is_taller_than_star(&pool, &self.needle)
+            false => search_movies_where_actress_is_taller_than_star(&conn, &self.needle)
                 .context(MoviesIssue)?,
         };
 

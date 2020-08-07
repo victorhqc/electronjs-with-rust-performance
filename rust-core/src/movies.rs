@@ -1,14 +1,19 @@
 use crate::models::{
     EnrichedImdbName, ImdbMovie, ImdbName, ImdbNameWithMoviesAndActresses, ImdbTitlePrincipal,
 };
+use crate::Conn;
+#[cfg(feature = "parallel")]
 use crate::DbPool;
 use diesel::prelude::*;
+#[cfg(feature = "parallel")]
 use rayon::prelude::*;
 use snafu::{ResultExt, Snafu};
 use std::cmp::Ordering::Equal;
 use std::collections::HashMap;
+#[cfg(feature = "parallel")]
 use std::sync::{Arc, Mutex};
 
+#[cfg(feature = "parallel")]
 pub fn parallel_search_movies_where_actress_is_taller_than_star(
     pool: &DbPool,
     p_name: &str,
@@ -147,11 +152,9 @@ pub fn parallel_search_movies_where_actress_is_taller_than_star(
 }
 
 pub fn search_movies_where_actress_is_taller_than_star(
-    pool: &DbPool,
+    conn: &Conn,
     p_name: &str,
 ) -> Result<Vec<ImdbNameWithMoviesAndActresses>> {
-    let conn = pool.get().context(GetConnection)?;
-
     let names: Vec<ImdbName> = {
         use crate::schema::imdb_names::dsl::*;
         let needle = format!("%{}%", p_name);
@@ -159,7 +162,7 @@ pub fn search_movies_where_actress_is_taller_than_star(
         imdb_names
             .filter(name.like(&needle))
             .or_filter(birth_name.like(&needle))
-            .load(&conn)
+            .load(conn)
             .context(Query)?
     };
 
@@ -178,7 +181,7 @@ pub fn search_movies_where_actress_is_taller_than_star(
 
                 imdb_title_principals
                     .filter(imdb_name_id.eq(&name.imdb_name_id))
-                    .load::<ImdbTitlePrincipal>(&conn)
+                    .load::<ImdbTitlePrincipal>(conn)
                     .unwrap()
             };
 
@@ -195,7 +198,7 @@ pub fn search_movies_where_actress_is_taller_than_star(
                         query = query.or_filter(imdb_title_id.eq(principal_id));
                     }
                     query = query.filter(category.eq("actress"));
-                    query.get_results::<ImdbTitlePrincipal>(&conn).unwrap()
+                    query.get_results::<ImdbTitlePrincipal>(conn).unwrap()
                 }
             };
 
@@ -210,7 +213,7 @@ pub fn search_movies_where_actress_is_taller_than_star(
                         query = query.or_filter(imdb_names::imdb_name_id.eq(c_a.imdb_name_id));
                     }
                     query = query.filter(imdb_names::height.gt(name.height));
-                    query.get_results::<ImdbName>(&conn).unwrap()
+                    query.get_results::<ImdbName>(conn).unwrap()
                 }
             }
             .into_iter()
@@ -255,7 +258,7 @@ pub fn search_movies_where_actress_is_taller_than_star(
                     for filtered_id in filtered_principals {
                         query = query.or_filter(imdb_title_id.eq(filtered_id.imdb_title_id));
                     }
-                    query.get_results::<ImdbMovie>(&conn).unwrap()
+                    query.get_results::<ImdbMovie>(conn).unwrap()
                 }
             };
 
@@ -282,9 +285,7 @@ pub fn search_movies_where_actress_is_taller_than_star(
     Ok(result)
 }
 
-pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<EnrichedImdbName>> {
-    let conn = pool.get().context(GetConnection)?;
-
+pub fn search_movies_by_name(conn: &Conn, p_name: &str) -> Result<Vec<EnrichedImdbName>> {
     let names: Vec<ImdbName> = {
         use crate::schema::imdb_names::dsl::*;
         let needle = format!("%{}%", p_name);
@@ -292,7 +293,7 @@ pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<Enriched
         imdb_names
             .filter(name.like(&needle))
             .or_filter(birth_name.like(&needle))
-            .load(&conn)
+            .load(conn)
             .context(Query)?
     };
 
@@ -304,14 +305,12 @@ pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<Enriched
 
                 imdb_title_principals
                     .filter(imdb_name_id.eq(&name.imdb_name_id))
-                    .load::<ImdbTitlePrincipal>(&conn)
+                    .load::<ImdbTitlePrincipal>(conn)
                     .unwrap()
             };
 
-            let movie_ids: Vec<String> = principals
-                .par_iter()
-                .map(|p| p.imdb_title_id.clone())
-                .collect();
+            let movie_ids: Vec<String> =
+                principals.iter().map(|p| p.imdb_title_id.clone()).collect();
 
             let mut movies: Vec<ImdbMovie> = {
                 use crate::schema::imdb_movies::dsl::*;
@@ -321,7 +320,7 @@ pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<Enriched
                     query = query.or_filter(imdb_title_id.eq(id));
                 }
 
-                query.get_results::<ImdbMovie>(&conn).unwrap()
+                query.get_results::<ImdbMovie>(conn).unwrap()
             };
 
             // Sort by metascore
@@ -345,6 +344,7 @@ pub fn search_movies_by_name(pool: &DbPool, p_name: &str) -> Result<Vec<Enriched
     Ok(result)
 }
 
+#[cfg(feature = "parallel")]
 pub fn parallel_search_movies_by_name(
     pool: &DbPool,
     p_name: &str,
@@ -440,6 +440,7 @@ pub type Result<T, E = MoviesError> = std::result::Result<T, E>;
 
 #[derive(Debug, Snafu)]
 pub enum MoviesError {
+    #[cfg(feature = "parallel")]
     #[snafu(display("Could not get SQLite connection: {}", source))]
     GetConnection { source: diesel::r2d2::PoolError },
 
