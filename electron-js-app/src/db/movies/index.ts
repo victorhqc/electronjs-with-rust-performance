@@ -24,6 +24,11 @@ export async function searchMoviesWhereActressIsTallerThan(
     const principals = await findPrincipalsFrom(actor);
     const whereIds = principals.map((p) => ({ imdb_title_id: p.imdb_title_id }));
 
+    if (principals.length === 0) {
+      result.push([actor, []]);
+      break;
+    }
+
     const coActressesPrincipal = (
       await ImdbTitlePrincipal.findAll({
         where: {
@@ -37,20 +42,30 @@ export async function searchMoviesWhereActressIsTallerThan(
 
     const coActressesIds = coActressesPrincipal.map((a) => ({ imdb_name_id: a.imdb_name_id }));
     // Get all the actresses that are taller than the actor.
-    const actresses = (
-      await ImdbName.findAll({
-        where: {
-          [Op.or]: coActressesIds,
-        },
-      })
-    )
-      .map<ImdbName>((a) => a.get())
-      .filter((a) => (a.height || 0) > actor.height);
+    let actresses: ImdbName[] = [];
+
+    if (coActressesPrincipal.length > 0) {
+      actresses = (
+        await ImdbName.findAll({
+          where: {
+            [Op.or]: coActressesIds,
+          },
+        })
+      )
+        .map<ImdbName>((a) => a.get())
+        .filter((a) => (a.height || 0) > actor.height);
+    }
+
+    const actressesMap: Record<string, ImdbName> = actresses.reduce(
+      (acc, actress) => ({
+        ...acc,
+        [actress.imdb_name_id]: actress,
+      }),
+      {},
+    );
 
     const filteredCoActressesPrincipal = coActressesPrincipal.filter((principal) => {
-      const index = actresses.findIndex((a) => a.imdb_name_id === principal.imdb_name_id);
-
-      return index >= 0;
+      return Boolean(actressesMap[principal.imdb_name_id]);
     });
 
     const filteredPrincipals = principals.filter((principal) => {
@@ -64,7 +79,12 @@ export async function searchMoviesWhereActressIsTallerThan(
       imdb_title_id: p.imdb_title_id,
     }));
 
-    const movies = await searchtMoviesFrom(filteredPrincipalIds);
+    let movies: ImdbMovie[] = [];
+
+    if (filteredPrincipals.length > 0) {
+      movies = await searchtMoviesFrom(filteredPrincipalIds);
+    }
+
     const moviesWithActresses = movies
       .map((movie) => {
         const actressesInMovie = filteredCoActressesPrincipal
@@ -72,7 +92,7 @@ export async function searchMoviesWhereActressIsTallerThan(
             return principal.imdb_title_id === movie.imdb_title_id;
           })
           .map((principal) => {
-            return actresses.find((a) => a.imdb_name_id === principal.imdb_name_id);
+            return actressesMap[principal.imdb_name_id];
           });
 
         return {
