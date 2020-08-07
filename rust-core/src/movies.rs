@@ -212,7 +212,10 @@ pub fn search_movies_where_actress_is_taller_than_star(
                     query = query.filter(imdb_names::height.gt(name.height));
                     query.get_results::<ImdbName>(&conn).unwrap()
                 }
-            };
+            }
+            .into_iter()
+            .filter(|a| a.height > name.height)
+            .collect();
 
             let actresses_map: HashMap<String, ImdbName> = {
                 let mut actresses_map: HashMap<String, ImdbName> = HashMap::new();
