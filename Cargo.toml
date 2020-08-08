@@ -2,6 +2,6 @@
 
 members = [
   "rust-core",
-  "neon-bindings/native",
+#   "neon-bindings/native",
   "wasm"
 ]

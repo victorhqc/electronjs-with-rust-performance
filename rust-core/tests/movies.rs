@@ -1,16 +1,18 @@
 mod common;
 
+use common::connect;
+#[cfg(feature = "parallel")]
 use common::db_pool;
+#[cfg(feature = "parallel")]
 use rust_core::movies::{
     parallel_search_movies_by_name, parallel_search_movies_where_actress_is_taller_than_star,
-    search_movies_by_name, search_movies_where_actress_is_taller_than_star,
 };
+use rust_core::movies::{search_movies_by_name, search_movies_where_actress_is_taller_than_star};
 use std::time::Instant;
 
 #[test]
 fn search_brad_pitt() {
-    let pool = db_pool();
-    let conn = pool.get().unwrap();
+    let conn = connect();
 
     let names = search_movies_by_name(&conn, "brad pitt").unwrap();
 
@@ -21,14 +23,14 @@ fn search_brad_pitt() {
 
 #[test]
 fn search_brad() {
-    let pool = db_pool();
-    let conn = pool.get().unwrap();
+    let conn = connect();
 
     let names = search_movies_by_name(&conn, "brad").unwrap();
 
     assert!(names.len() > 0);
 }
 
+#[cfg(feature = "parallel")]
 #[test]
 fn search_twice() {
     let pool = db_pool();
@@ -41,13 +43,13 @@ fn search_twice() {
 
 #[test]
 fn search_taller() {
-    let pool = db_pool();
-    let conn = pool.get().unwrap();
+    let conn = connect();
 
     let names = search_movies_where_actress_is_taller_than_star(&conn, "liam neeson").unwrap();
     assert!(names.len() > 0);
 }
 
+#[cfg(feature = "parallel")]
 #[test]
 fn search_parallel_taller() {
     let pool = db_pool();
@@ -62,8 +64,7 @@ fn search_parallel_taller() {
 
 #[test]
 fn search_liam() {
-    let pool = db_pool();
-    let conn = pool.get().unwrap();
+    let conn = connect();
 
     let start = Instant::now();
     let names = search_movies_where_actress_is_taller_than_star(&conn, "liam").unwrap();
@@ -73,6 +74,7 @@ fn search_liam() {
     assert!(names.len() > 0);
 }
 
+#[cfg(feature = "parallel")]
 #[test]
 fn search_parallel_liam() {
     let pool = db_pool();

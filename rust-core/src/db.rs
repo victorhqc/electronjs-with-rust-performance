@@ -88,7 +88,6 @@ pub enum DbError {
     Migration {
         source: diesel_migrations::RunMigrationsError,
     },
-
     #[cfg(feature = "parallel")]
     #[snafu(display("Could not build pool connection: {}", source))]
     BuildPool { source: diesel::r2d2::PoolError },
