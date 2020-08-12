@@ -3,6 +3,7 @@ import { take, select, call } from 'typed-redux-saga';
 import { performance } from 'perf_hooks';
 import { ActionMatchingPattern as ActionType } from '@redux-saga/types';
 import { getType } from 'typesafe-actions';
+import { printCSVHeap } from '../../utils/memoryUsage';
 import { errorMessage } from '../../utils/error';
 import { searchMoviesByName, searchMoviesWhereActressIsTallerThan } from '../../db/movies';
 import { selectByNameStatus, selectTallerStatus } from './selectors';
@@ -56,6 +57,7 @@ function* handleSearchByName(action: ActionType<typeof search.request>) {
     const result = yield* call(searchMoviesByName, action.payload);
     const t1 = performance.now();
     console.log(`Search took: ${t1 - t0} milliseconds.`);
+    printCSVHeap();
     yield put(search.success({ actors: result }));
   } catch (e) {
     yield put(search.failure({ message: errorMessage(e) }));
@@ -68,6 +70,7 @@ function* handleSearchTaller(action: ActionType<typeof searchTaller.request>) {
     const result = yield* call(searchMoviesWhereActressIsTallerThan, action.payload);
     const t1 = performance.now();
     console.log(`Search taller took: ${t1 - t0} milliseconds.`);
+    printCSVHeap();
     yield put(searchTaller.success({ result }));
   } catch (e) {
     yield put(searchTaller.failure({ message: errorMessage(e) }));

@@ -5,6 +5,7 @@ import { ActionMatchingPattern as ActionType } from '@redux-saga/types';
 import { searchMoviesByName, searchMoviesWhereActressIsTaller } from 'neon-bindings';
 import { getType } from 'typesafe-actions';
 import { errorMessage } from '../../utils/error';
+import { printCSVHeap } from '../../utils/memoryUsage';
 import { selectByNameStatus, selectTallerStatus } from './selectors';
 import {
   searchMoviesByName as search,
@@ -56,6 +57,7 @@ function* handleSearchByName(action: ActionType<typeof search.request>) {
     const result = yield* call(searchMoviesByName, action.payload);
     const t1 = performance.now();
     console.log(`Search took: ${t1 - t0} milliseconds.`);
+    printCSVHeap();
     yield put(search.success(result));
   } catch (e) {
     yield put(search.failure({ message: errorMessage(e) }));
@@ -68,6 +70,7 @@ function* handleSearchTaller(action: ActionType<typeof searchTaller.request>) {
     const result = yield* call(searchMoviesWhereActressIsTaller, action.payload);
     const t1 = performance.now();
     console.log(`Search taller took: ${t1 - t0} milliseconds.`);
+    printCSVHeap();
     yield put(searchTaller.success({ result }));
   } catch (e) {
     yield put(searchTaller.failure({ message: errorMessage(e) }));
