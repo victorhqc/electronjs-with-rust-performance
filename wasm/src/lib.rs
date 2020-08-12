@@ -36,29 +36,10 @@ pub async fn search_by_name_wrapper(args: SearchMoviesArgs) -> JsValue {
     JsValue::from_serde(&res).unwrap()
 }
 
-// pub fn search_by_name(args: SearchMoviesArgs) -> Promise {
-//     future_to_promise(async move { search_by_name_wrapper(args).await })
-// }
-
-// pub fn write(&mut self, chunk: JsValue) -> Promise {
-//     let inner = self.inner.clone();
-//     future_to_promise(async move {
-//         // This mutable borrow can never panic, since the WritableStream always queues
-//         // each operation on the underlying sink.
-//         let mut inner = inner.try_borrow_mut().unwrap_throw();
-//         inner.write(chunk).await.map(|_| JsValue::undefined())
-//     })
-// }
-
 #[wasm_bindgen]
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct SearchMoviesArgs {
     needle: String,
     db_path: Option<String>,
-}
-
-#[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, wasm!");
 }
