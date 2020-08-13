@@ -108,7 +108,46 @@ in a concurrent mode, so it uses all the available processors of the machine.
 
 ![Taller than "liam"](./svg/taller-actress-than-liam.svg)
 
+## RAM Results
+
+Measuring RAM Usage may need some improvements and measure again. For now, only the RAM usage in
+V8 is measured. This because I'm not sure how to _accurately measure it_.
+
+The measurements were done by doing the same set of queries in the same order, so there could be a
+somewhat similar scenario. Also, the data is captured as soon as the results of the queries is
+gotten in the Node.js thread. Measurements in the Chromium side were not done, as it should be the
+exact same.
+
+![RAM Usage](./svg/ram-usage.svg)
+
+## Disk Usage
+
+The disk is measured by checking the size of the artifacts produced by: Bundling the code &
+packaging the final binary for installation.
+
+![Disk Usage](./svg/disk-usage.svg)
+
 ## Conclusions
+
+Rust can be used to improve performance in an Electron.js Application. There are two possible ways
+of doing that: Using Native Add-Ons or WebAssembly. The former has better support, as it uses the
+same API that Node.js uses to consume its native dependencies, so using this method, it's possible
+to use any native dependency and all the cores of a computer. The latter is newer and it's easier
+to integrate in JavaScript as it can be used in Node.js or Chromium, but there's a lot of rough
+edges as today (August 13th 2020). Using native sub-dependencies is tricky (I can't compile this
+code for WebAssembly for example) and there's plan to have multi-thread support, but is not possible
+today.
+
+For a Node.js Application or if a native sub-dependency is used, then using Native Add-Ons is
+recommended. If the implementation needs to be used in Chromium or if the crate has no
+native sub-dependencies, then WebAssembly is fine.
+
+The performance gains that is significant enough is in the CPU, both RAM & Disk usage didn't seem
+to have huge benefits. However, in some cases V8 had almost the exact same performance as Rust,
+unless the code is using a multi-threaded approach. In the best case scenario, Rust is able to have
+a 10x performance gain (A whole order of magnitude!) and in the worst case it's a 3x performance
+gain. Of course this numbers may change depending on specific implementation, but it's something
+noticeable.
 
 ## How to run locally
 
@@ -132,3 +171,10 @@ in a concurrent mode, so it uses all the available processors of the machine.
 ![Electron.js Application using WebAssembly](./svg/electron-wasm-app.svg)
 
 ## References
+
+Some research papers/articles/talks with different numbers & applications can be read in:
+
+-   [https://sci-hub.tw/https://doi.org/10.1007/978-3-319-92375-8_15](https://sci-hub.tw/https://doi.org/10.1007/978-3-319-92375-8_15)
+-   [https://mnt.io/2018/08/22/from-rust-to-beyond-the-webassembly-galaxy/](https://mnt.io/2018/08/22/from-rust-to-beyond-the-webassembly-galaxy/)
+-   [https://www.youtube.com/watch?v=lLzFJenzBng](https://www.youtube.com/watch?v=lLzFJenzBng)
+-   [http://www.sable.mcgill.ca/publications/techreports/2018-2/techrep.pdf](http://www.sable.mcgill.ca/publications/techreports/2018-2/techrep.pdf)
