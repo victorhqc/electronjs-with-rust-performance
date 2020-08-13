@@ -71,7 +71,8 @@ boilerplate or base for the _Electron.js_ applications.
 
 -   **electron-js-app:** Application using only JavaScript Code
 -   **electron-neon-app:** _Electron.js_ Application using the Native _Add-Ons_
--   **electron-webassembly-app:** Not implemented yet...
+-   **electron-webassembly-app:** Not implemented yet. As I'm unable to compile the WebAssembly
+    code, I'm having [this exact same issue](https://stackoverflow.com/questions/58681067/how-can-i-link-a-rust-wasm-application-with-libpq-via-wasm-pack)
 -   _rust-core:_ Code that is used in _Add-Ons_ and WebAssembly implementation for rust.
 -   _neon-bindings:_ Native _Add-Ons_ (bindings) to be used in a _Node.js_ or _Electron.js_
     application.
