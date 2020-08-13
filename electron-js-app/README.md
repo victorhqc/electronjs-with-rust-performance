@@ -2,4 +2,4 @@
 
 ## Architecture
 
-![Application Architecture](../electronjs.svg)
+![Application Architecture](../svg/electron-js-app.svg)

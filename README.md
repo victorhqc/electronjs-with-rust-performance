@@ -50,7 +50,7 @@ And _why imdb?_ you might ask. Well I first tried with a
 [league of legends data set](https://www.kaggle.com/paololol/league-of-legends-ranked-matches), but
 the data was incomplete/broken so I went with the second option (╯°□°）╯︵ ┻━┻)
 
-![Database schema](./db.svg)
+![Database schema](./svg/db.svg)
 
 ## Repository structure
 
@@ -58,12 +58,28 @@ Note: **bold** items are the applications (which is the part that this projects 
 _italic_ items are only meant for supporting the main code, could be considered a kind of
 boilerplate or base for the _Electron.js_ applications.
 
--   **js-app:** TBD...
--   **neon-app:** _Electron.js_ application using the Native _Add-Ons_
--   **webassembly-app:** TBD...
+-   **electron-js-app:** Application using only JavaScript Code
+-   **electron-neon-app:** _Electron.js_ Application using the Native _Add-Ons_
+-   **electron-webassembly-app:** Not implemented yet...
 -   _rust-core:_ Code that is used in _Add-Ons_ and WebAssembly implementation for rust.
 -   _neon-bindings:_ Native _Add-Ons_ (bindings) to be used in a _Node.js_ or _Electron.js_
     application.
+-   _wasm_: Code that binds the _rust-core_ crate and exposing functions with WebAssembly, similar
+    to _neon-bindings_
+
+## Applications Architecture
+
+### electron-js-app
+
+![Electron.js Application](./svg/electron-js-app.svg)
+
+### electron-neon-app
+
+![Electron.js Application using native AddOns](./svg/electron-neon-app.svg)
+
+### electron-wasm-app
+
+![Electron.js Application using WebAssembly](./svg/electron-wasm-app.svg)
 
 ## How to run tests locally
 
