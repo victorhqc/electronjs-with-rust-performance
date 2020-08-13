@@ -105,15 +105,15 @@ in a concurrent mode, so it uses all the available processors of the machine.
 
 Searching movies by person's name
 
-![Movies with "brad"](./movies-with-brad.svg)
+![Movies with "brad"](./svg/movies-with-brad.svg)
 
-![Movies with "liam"](./movies-with-liam.svg)
+![Movies with "liam"](./svg/movies-with-liam.svg)
 
 Searching movies that have taller actresses than the person being searched
 
-![Taller than "brad"](./taller-actress-than-brad.svg)
+![Taller than "brad"](./svg/taller-actress-than-brad.svg)
 
-![Taller than "liam"](./taller-actress-than-liam.svg)
+![Taller than "liam"](./svg/taller-actress-than-liam.svg)
 
 ## Conclusions
 
