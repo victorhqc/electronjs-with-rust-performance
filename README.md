@@ -103,13 +103,13 @@ The two exact queries were performed in the JavaScript-Only Application as well 
 Native Add-Ons. And as a small bonus, the second application has a mode to run the same queries but
 in a concurrent mode, so it uses all the available processors of the machine.
 
-Searching movies by person's name
+#### Searching movies by person's name
 
 ![Movies with "brad"](./svg/movies-with-brad.svg)
 
 ![Movies with "liam"](./svg/movies-with-liam.svg)
 
-Searching movies that have taller actresses than the person being searched
+#### Searching movies that have taller actresses than the person being searched
 
 ![Taller than "brad"](./svg/taller-actress-than-brad.svg)
 
