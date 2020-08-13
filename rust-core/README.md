@@ -12,7 +12,9 @@ the details for the database & basic utilities that can be reused across project
 ## Setup
 
 Duplicate the `.env.example` file and name it `.env`. It contains the environment variables needed
-to run the project.
+to run the project. Then un-compress `data.zip` and place it in the current directory. Make sure
+that there's no nested path in the uncompressed path and the `.csv` files are in the top-most
+directory of `data`.
 
 For Linux an Mac OSX
 
@@ -32,4 +34,4 @@ For Windows
 
 Here's the Entity Relation model for the database.
 
-![Database Entity Relation Diagram](../db.svg)
+![Database Entity Relation Diagram](../svg/db.svg)
