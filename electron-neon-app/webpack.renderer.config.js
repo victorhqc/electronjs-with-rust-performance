@@ -2,7 +2,6 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const rules = require('./webpack.rules');
 const plugins = require('./webpack.plugins');
-const { getExternalsFn } = require('./webpack/externals');
 
 rules.push({
   test: /\.css$/,
@@ -39,5 +38,4 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
   },
-  externals: [getExternalsFn()],
 };

@@ -61,7 +61,7 @@ const SearchTaller: FC<Props> = ({ search, items, status }) => {
                       <p>Taller Actresses:</p>
                       <ul>
                         {actress.map((actress) => (
-                          <li>
+                          <li key={actress.imdb_name_id}>
                             {actress.name}
                             {': '}
                             {actress.height}
