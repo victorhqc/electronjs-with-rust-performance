@@ -50,6 +50,19 @@ the data was incomplete/broken so I went with the second option (╯°□°）�
 
 ![Database schema](./svg/db.svg)
 
+## About the Applications
+
+The applications built use the data previously described and make two different queries:
+
+-   Search movies using a person's name.
+-   Search movies where actresses are taller than the person being searched.
+
+Both queries are simple enough and try to imitate a regular application usage. No pagination is
+being used and no joins (this is suggested
+[here](https://github.com/petehunt/rowrm#why-cant-i-do-joins)), which may be a bad idea in some
+scenarios, but in this case I was trying to put some pressure in the application to get significant
+enough numbers.
+
 ## Repository structure
 
 Note: **bold** items are the applications (which is the part that this projects measures). And the
@@ -65,6 +78,45 @@ boilerplate or base for the _Electron.js_ applications.
 -   _wasm_: Code that binds the _rust-core_ crate and exposing functions with WebAssembly, similar
     to _neon-bindings_
 
+## How to run locally
+
+1.  The first thing to do is to create the database itself. Go to [rust-core](./rust-core) and
+    follow the instructions to initialize database.
+1.  Run electron js application following instructions in [electron-js-app](./electron-js-app)
+1.  Run neon application following instructions in [electron-neon-app](./electron-neon-app)
+
+## Results
+
+Unfortunately, at this moment I'm unable to compile the WebAssembly that would had been used by
+an Electron.js Application to add its results. I'm sure it will be possible at some point and I
+can run the tests again.
+
+The machine being used to run the tests is:
+
+-   Intel i7-10750H
+-   16GB RAM
+-   Windows 10 Pro version 2004
+
+### CPU
+
+The two exact queries were performed in the JavaScript-Only Application as well as the one with
+Native Add-Ons. And as a small bonus, the second application has a mode to run the same queries but
+in a concurrent mode, so it uses all the available processors of the machine.
+
+Searching movies by person's name
+
+![Movies with "brad"](./movies-with-brad.svg)
+
+![Movies with "liam"](./movies-with-liam.svg)
+
+Searching movies that have taller actresses than the person being searched
+
+![Taller than "brad"](./taller-actress-than-brad.svg)
+
+![Taller than "liam"](./taller-actress-than-liam.svg)
+
+## Conclusions
+
 ## Applications Architecture
 
 ### electron-js-app
@@ -79,10 +131,4 @@ boilerplate or base for the _Electron.js_ applications.
 
 ![Electron.js Application using WebAssembly](./svg/electron-wasm-app.svg)
 
-## How to run tests locally
-
-TBD...
-
-## Results
-
-TBD...
+## References
