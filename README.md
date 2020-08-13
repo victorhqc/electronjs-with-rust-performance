@@ -78,14 +78,7 @@ boilerplate or base for the _Electron.js_ applications.
 -   _wasm_: Code that binds the _rust-core_ crate and exposing functions with WebAssembly, similar
     to _neon-bindings_
 
-## How to run locally
-
-1.  The first thing to do is to create the database itself. Go to [rust-core](./rust-core) and
-    follow the instructions to initialize database.
-1.  Run electron js application following instructions in [electron-js-app](./electron-js-app)
-1.  Run neon application following instructions in [electron-neon-app](./electron-neon-app)
-
-## Results
+## About the Results
 
 Unfortunately, at this moment I'm unable to compile the WebAssembly that would had been used by
 an Electron.js Application to add its results. I'm sure it will be possible at some point and I
@@ -97,23 +90,30 @@ The machine being used to run the tests is:
 -   16GB RAM
 -   Windows 10 Pro version 2004
 
-### CPU
+## CPU Results
 
 The two exact queries were performed in the JavaScript-Only Application as well as the one with
 Native Add-Ons. And as a small bonus, the second application has a mode to run the same queries but
 in a concurrent mode, so it uses all the available processors of the machine.
 
-#### Searching movies by person's name
+### Searching movies by person's name
 
 ![Movies with "brad"](./svg/movies-with-brad.svg)
 
 ![Movies with "liam"](./svg/movies-with-liam.svg)
 
-#### Searching movies that have taller actresses than the person being searched
+### Searching movies that have taller actresses than the person being searched
 
 ![Taller than "brad"](./svg/taller-actress-than-brad.svg)
 
 ![Taller than "liam"](./svg/taller-actress-than-liam.svg)
+
+## How to run locally
+
+1.  The first thing to do is to create the database itself. Go to [rust-core](./rust-core) and
+    follow the instructions to initialize database.
+1.  Run electron js application following instructions in [electron-js-app](./electron-js-app)
+1.  Run neon application following instructions in [electron-neon-app](./electron-neon-app)
 
 ## Conclusions
 
