@@ -108,14 +108,14 @@ in a concurrent mode, so it uses all the available processors of the machine.
 
 ![Taller than "liam"](./svg/taller-actress-than-liam.svg)
 
+## Conclusions
+
 ## How to run locally
 
 1.  The first thing to do is to create the database itself. Go to [rust-core](./rust-core) and
     follow the instructions to initialize database.
 1.  Run electron js application following instructions in [electron-js-app](./electron-js-app)
 1.  Run neon application following instructions in [electron-neon-app](./electron-neon-app)
-
-## Conclusions
 
 ## Applications Architecture
 
