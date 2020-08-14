@@ -259,4 +259,9 @@ Some research papers/articles/talks with different numbers & applications can be
 -   [https://mnt.io/2018/08/22/from-rust-to-beyond-the-webassembly-galaxy/](https://mnt.io/2018/08/22/from-rust-to-beyond-the-webassembly-galaxy/)
 -   [https://www.youtube.com/watch?v=lLzFJenzBng](https://www.youtube.com/watch?v=lLzFJenzBng)
 -   [http://www.sable.mcgill.ca/publications/techreports/2018-2/techrep.pdf](http://www.sable.mcgill.ca/publications/techreports/2018-2/techrep.pdf)
+
+## Honorable mentions
+
+There's an existing project that uses Web Technologies for the Front-End & Rust for the Back-End to
+build Desktop Applications. It's worth checking it out:
 [https://tauri.studio](https://tauri.studio)
