@@ -97,6 +97,10 @@ The two exact queries were performed in the JavaScript-Only Application as well 
 Native Add-Ons. And as a small bonus, the second application has a mode to run the same queries but
 in a concurrent mode, so it uses all the available processors of the machine.
 
+The data is gotten by doing the same exact querying 10 times in all different applications &
+variants and using `performance.now()` to get the number of milliseconds it takes to complete the
+request.
+
 ### Searching movies by person's name
 
 ![Movies with "brad"](./svg/movies-with-brad.svg)
